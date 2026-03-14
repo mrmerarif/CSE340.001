@@ -57,3 +57,47 @@ INSERT INTO project (organization_id, title, description, location, date) VALUES
 (3, 'Charity 5K Volunteers', 'Support a local charity race with setup and cleanup.', 'City Stadium', '2025-04-29'),
 (3, 'Clothing Drive Sorting', 'Sort and organize donated clothing for families.', 'UnityServe Warehouse', '2025-05-06'),
 (3, 'Family Game Night', 'Host games and activities for families in need of a fun night out.', 'Community Gym', '2025-05-13');
+
+
+-- Create category table
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Create join table for many-to-many relationship
+CREATE TABLE project_category (
+    project_id INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (project_id, category_id),
+    FOREIGN KEY (project_id) REFERENCES project(project_id),
+    FOREIGN KEY (category_id) REFERENCES category(category_id)
+);
+
+-- Insert categories
+INSERT INTO category (name) VALUES
+('Community Service'),
+('Education'),
+('Environment');
+
+
+-- Associate each project with at least one category
+INSERT INTO project_category (project_id, category_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 1),
+(5, 2),
+(6, 3),
+(7, 1),
+(8, 2),
+(9, 3),
+(10, 1),
+(11, 2),
+(12, 3),
+(13, 1),
+(14, 2),
+(15, 3);
+
+
+
