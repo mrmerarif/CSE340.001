@@ -1,6 +1,6 @@
 import db from './db.js';
 
-export async function getAllCategories() {
+export const getAllCategories = async () => {
   const query = `
     SELECT category_id, name
     FROM category
@@ -8,4 +8,4 @@ export async function getAllCategories() {
   `;
   const result = await db.query(query);
   return result.rows;
-}
+};
