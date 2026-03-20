@@ -254,6 +254,26 @@ h2.section-title::after {
 }
 
 /* =========================
+   🔵 NEW FIX — applies to your PROJECTS PAGE
+   because it uses .organizations-list, not .projects-list
+   ========================= */
+
+/* 🔵 Make project + organization links turn white on hover */
+.organizations-list li:hover a {
+    color: var(--cream) !important;
+}
+
+/* 🔵 Ensure visited links also turn white on hover */
+.organizations-list li:hover a:visited {
+    color: var(--cream) !important;
+}
+
+/* 🔵 Ensure active/clicked link is white on hover */
+.organizations-list li:hover a:active {
+    color: var(--cream) !important;
+}
+
+/* =========================
    Organizations list (logos + text)
    ========================= */
 .organizations-list {

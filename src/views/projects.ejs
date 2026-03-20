@@ -12,11 +12,21 @@
                 <ul>
                     <% projects.forEach(project=> { %>
                         <li>
-                            <% const dateObj=new Date(project.date); const
-                                formattedDate=dateObj.toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
-                                day: 'numeric' }); %>
-                                <%= formattedDate %>: <%= project.title %> (<%= project.organization_name %>)
+                            <% const dateObj=new Date(project.date); const formattedDate=dateObj.toLocaleDateString('en-US', { year: 'numeric' ,
+                                month: 'short' , day: 'numeric' }); %>
+                        
+                                <%= formattedDate %>:
+                                    <a href="/project/<%= project.project_id %>">
+                                        <%= project.title %>
+                                    </a>
+                                    (
+                                    <a href="/organization/<%= project.organization_id %>">
+                                        <%= project.organization_name %>
+                                    </a>
+                                    )
                         </li>
+                          
+                          
                         <% }) %>
                 </ul>
                 <% } else { %>
