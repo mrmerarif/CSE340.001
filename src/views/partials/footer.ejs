@@ -1,5 +1,9 @@
 <footer>
-    <p>&copy; <%= new Date().getFullYear() %> CSE 340 Service Network.</p>
+    <p>&copy; <%= new Date().getFullYear() %> CSE 340 Service Network.
+            <% if (NODE_ENV==='development' ) { %>
+                (Development mode)
+                <% } %>
+    </p>
 
     <div class="footer-icons">
         <!-- future icons go here -->
@@ -8,7 +12,3 @@
 
 <!-- Load main JavaScript -->
 <script src="/js/main.js" type="module"></script>
-
-</body>
-
-</html>
