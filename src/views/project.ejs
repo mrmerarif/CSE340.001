@@ -27,6 +27,25 @@
             </a>
         </p>
 
+        <!-- NEW: Category tags -->
+        <section class="project-categories">
+            <strong>Categories:</strong>
+
+            <% if (categories && categories.length> 0) { %>
+                <ul>
+                    <% categories.forEach(cat=> { %>
+                        <li>
+                            <a href="/category/<%= cat.category_id %>">
+                                <%= cat.name %>
+                            </a>
+                        </li>
+                        <% }) %>
+                </ul>
+                <% } else { %>
+                    <p>No categories listed for this project.</p>
+                    <% } %>
+        </section>
+
         <p>
             <a href="/projects">← Back to Upcoming Service Projects</a>
         </p>
