@@ -4,33 +4,38 @@ import path from 'path';
 import { testConnection } from './src/models/db.js';
 import router from './src/controllers/routes.js';
 
-// Define the application environment
+// ------------------------------------------------------------
+// ENVIRONMENT SETUP
+// ------------------------------------------------------------
+// Determine whether the app is running in development or production.
+// This affects logging and error visibility.
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 
-// Define the port number the server will listen on
+// Define the port number the server will listen on.
 const PORT = process.env.PORT || 3000;
 
-// Recreate __filename and __dirname for ES modules
+// Recreate __filename and __dirname for ES modules.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create the Express app
+// Create the Express application instance.
 const app = express();
 
-/**
- * Configure Express middleware
- */
 
-// Serve static files from the public directory
+// ------------------------------------------------------------
+// MIDDLEWARE CONFIGURATION
+// ------------------------------------------------------------
+
+// Serve static files (CSS, images, JS) from the public directory.
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Set EJS as the templating engine
+// Enable EJS as the templating engine.
 app.set('view engine', 'ejs');
 
-// Tell Express where to find your templates
+// Tell Express where to find your EJS templates.
 app.set('views', path.join(__dirname, 'src/views'));
 
-// Middleware to log all incoming requests
+// Log all incoming requests in development mode.
 app.use((req, res, next) => {
   if (NODE_ENV === 'development') {
     console.log(`${req.method} ${req.url}`);
@@ -38,23 +43,38 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware to make NODE_ENV available to all templates
+// Make NODE_ENV available inside all EJS templates.
 app.use((req, res, next) => {
   res.locals.NODE_ENV = NODE_ENV;
   next();
 });
 
-// Use the imported router to handle routes
+// ------------------------------------------------------------
+// IMPORTANT: BODY PARSING MIDDLEWARE
+// ------------------------------------------------------------
+// These two lines allow Express to read form data (POST requests).
+// Without them, req.body will always be undefined.
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// ------------------------------------------------------------
+// ROUTES
+// ------------------------------------------------------------
+// Use the imported router to handle all application routes.
 app.use(router);
 
-// Catch-all route for 404 errors
+// ------------------------------------------------------------
+// ERROR HANDLING
+// ------------------------------------------------------------
+
+// Catch-all route for 404 (page not found) errors.
 app.use((req, res, next) => {
   const err = new Error('Page Not Found');
   err.status = 404;
   next(err);
 });
 
-// Global error handler
+// Global error handler for all server errors.
 app.use((err, req, res, next) => {
   console.error('Error occurred:', err.message);
   console.error('Stack trace:', err.stack);
@@ -71,6 +91,9 @@ app.use((err, req, res, next) => {
   res.status(status).render(`errors/${template}`, context);
 });
 
+// ------------------------------------------------------------
+// START THE SERVER
+// ------------------------------------------------------------
 app.listen(PORT, async () => {
   try {
     await testConnection();

@@ -1,0 +1,69 @@
+Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say "I don't know" or "I made a mistake." That's the fastest way we'll learn today.
+Before we begin, I want to make sure this feels like a safe space to explore and learn—mistakes are not just okay, they’re useful here.
+What name would you like me to use for you during this session?
+Merari
+Great—thanks, Merari. Glad you’re here. This is a safe space, and we’ll work through everything step by step.
+Let’s start with Topic 1: Models.
+Since we’re in a chat interface, please paste a non-trivial model function from your project—specifically one that accepts a parameter and uses it in an SQL query.
+here’s one of my model functions that takes a parameter and uses it inside an SQL query. This one retrieves all the categories for a specific project: export const getCategoriesByProjectId = async (projectId) => { const query = SELECT c.category_id, c.name FROM category c JOIN project_category pc ON c.category_id = pc.category_id WHERE pc.project_id = $1; ; const result = await db.query(query, [projectId]); return result.rows; }; 
+Nice, thanks for sharing that, Merari—this is a solid, non-trivial model function ??
+Let’s dig into your understanding of it:
+Can you walk me through what this function is doing step by step, especially how the projectId parameter is used in the SQL query and why you chose $1 instead of directly inserting the value into the string?
+This function takes the project ID, and plugs it into the query using the placeholder, and then returns all the categories that are in that project. 
+Good—you're on the right track, and your high-level understanding is solid.
+Let’s push a little deeper on the why behind your approach:
+Why is using the $1 placeholder with [projectId] considered safer or better than directly inserting projectId into the SQL string (for example, using string interpolation)?
+The main reason why the $1 is use with the project ID instead of dropping it straight into the SQL is for safety and it is treated as a value data and not as part as the SQL command, so incase someone passes something malicious it cannot break out of the query or inject SQL
+Exactly—that’s a strong explanation, Merari. You nailed the key idea: it prevents SQL injection by treating the input strictly as data, not executable SQL. That’s an important best practice ??
+Let’s move forward to Topic 2: Views.
+Since we’re in a chat interface, please paste a non-trivial EJS snippet from one of your views—specifically one where you insert dynamic data into a link (like an <a> tag with a variable inside the URL).
+here’s an EJS snippet from my project where I’m inserting dynamic data into a link. This one is from my categories page, where each category name becomes a link to its details page: <ul> <% categories.forEach(category => { %> <li> <a href="/category/<%= category.category_id %>"> <%= category.name %> </a> </li> <% }) %> </ul> 
+Nice, Merari—this is a clean and practical example of dynamic rendering in EJS ??
+You’re looping through data and building links dynamically, which is exactly what we want to see here.
+Let’s go a bit deeper into your reasoning:
+What exactly happens when a user clicks one of these links (e.g., /category/3), and how does that connect to the rest of your application (controller and route)?
+When the user clicks a link like /category/3, the browser sends a GET request to that URL. In my app, I have a route set up for something like /category/:id, so Express matches 3 to the :id parameter and then that route calls my category controller function, which reads the req.params.id, and it passes it into the model (for example, getCategoryById(id) and getProjectsByCategoryId(id)), and waits for the database results. Once the data comes back, the controller calls the responds to res.render('category', { category, projects, title }), and that’s what feeds the EJS view for the category details page. So the link in the view ? hits the route ? triggers the controller ? calls the model ? then renders another view with the data. 
+That’s an excellent walkthrough, Merari—you clearly understand the full flow from view ? route ? controller ? model ? back to view. That’s a big step forward from seeing them as separate pieces ??
+Let’s move on to Topic 3: Controllers.
+Since we’re in a chat interface, please paste a non-trivial controller route handler from your project—specifically one that uses a route parameter (like :id).
+here’s one of my controller route handlers that uses a route parameter. This is the one for the category details page: export const showCategoryDetailsPage = async (req, res, next) => { try { const id = req.params.id; const category = await getCategoryById(id); const projects = await getProjectsByCategoryId(id); res.render("category", { title: category.name, category, projects }); } catch (err) { next(err); } }; 
+Nice, Merari—this is a strong controller example. You’re handling async logic, pulling from multiple model functions, and rendering a view with structured data. Also great to see try/catch with next(err) ??
+Let’s dig into your reasoning:
+Why did you choose to use next(err) in the catch block instead of directly sending a response like res.status(500).send(...) inside this controller?
+one of the reasons that I used next(err) instead of sending a response directly is because I wanted all my error handling to go through the same centralized middleware. If I did res.status(500).send(...) in every controller, I’d end up repeating myself and mixing error UI logic into a bunch of different places. By calling next(err), Express passes the error to my global error handler, where I can log it, decide what to show the user, and render my 500 error page in one consistent way. It also keeps the controller focused on its main job: getting data and rendering the normal view, not deciding how every error should look.
+That’s a really solid explanation, Merari—you’re thinking like a developer who cares about structure and maintainability ??
+You highlighted separation of concerns and centralized error handling, which is exactly the goal.
+Let’s move into our final area: Topic 4: Error Handling.
+Since we’re in a chat interface, please paste a relevant error-handling snippet from your app—this could be your global error middleware, a 404 handler, or how you render a 500 error page.
+here’s the errorhandling middleware that I’m using in my app. This is the global 500 handler that catches anything I pass to next(err): app.use((err, req, res, next) => { console.error(err); res.status(500).render("errors/500", { title: "Server Error", message: err.message, stack: process.env.NODE_ENV === "development" ? err.stack : null }); }); 
+Nice, Merari—this is a clean and well-structured global error handler ??
+You’re logging the error, setting the status, and conditionally showing the stack trace based on environment—that’s a strong, real-world pattern.
+Let’s dig a bit deeper into your strategy:
+How would you handle a 404 (Not Found) error in your app, and where would that middleware be placed relative to this 500 error handler?
+I have a separate middleware that runs after all my normal routes so if none of the other routes match it will go through this handler. 
+Good—that’s the right idea, Merari ?? You’re correctly thinking about middleware order and how Express falls through routes.
+Let’s make that understanding more concrete:
+Can you paste your actual 404 middleware code snippet and explain what response it sends to the user?
+here is my actual404 middleware that does that. app.use((req, res) => { res.status(404).render("errors/404", { title: "Page Not Found" }); }); This sends the user the custom 404 EJS page in stead of the browser giving them the generic cannot GET/whatever page thei were looking for. 
+Nice, Merari—that’s exactly how a proper 404 handler should be set up ??
+You’ve got the placement right (after all routes), and you’re rendering a custom view instead of showing the default Express message, which is a much better user experience.
+You’ve now successfully walked through all four required topics:
+* Models ? 
+* Views ? 
+* Controllers ? 
+* Error handling (including 500 + 404) ? 
+That completes the required discussion for the session.
+To wrap things up with a bit of reflection:
+Looking back at all four areas, which one do you feel least confident about right now, and why?
+out of all the areas the one that I struggle the most is number one, I still need to get more involve in how to write queries and how to structure them.
+That’s a really useful insight, Merari—and it’s a very common place to feel less confident. SQL and query design take practice because you're thinking in sets and relationships, not just step-by-step logic.
+Let’s build on that directly from your own code:
+If you wanted to modify your getCategoriesByProjectId query to also include the number of projects in each category (a count), how do you think you would change the SQL?
+If I wanted to include a count, I’d basically add a COUNT(*) and a GROUP BY to the query. That’s really the main change. Anyway, that wraps things up for me, I’m going to stop here for now. Thanks for the session.
+That’s a solid instinct, Merari—you’re thinking in the right direction with COUNT(*) and GROUP BY. That’s exactly how you’d start extending a query like that ??
+You did a strong job in this session:
+* You clearly explained the full request flow (view ? controller ? model ? response) 
+* Your use of parameterized queries shows good security awareness 
+* Your controller structure and error handling are clean and well thought out 
+* And you identified a real growth area with SQL, which is exactly what this session is for
+

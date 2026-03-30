@@ -8,18 +8,27 @@
         <section class="organizations-list">
             <h2 class="section-title">Our Partners</h2>
 
-            <ul>
+            <ul class="organization-items">
                 <% organizations.forEach(organization=> { %>
-                    <li>
-                        <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo">
-                        <a href="/organization/<%= organization.organization_id %>">
-                            <%= organization.name %>
-                        </a>:
-                        <%= organization.contact_email %>
+                    <li class="organization-item">
+                        <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo"
+                            class="organization-logo">
+                        <div class="organization-info">
+                            <a href="/organization/<%= organization.organization_id %>" class="organization-name">
+                                <%= organization.name %>
+                            </a>
+                            <span class="organization-email">
+                                <%= organization.contact_email %>
+                            </span>
+                        </div>
                     </li>
                     <% }); %>
             </ul>
         </section>
+
+        <p class="add-organization-link">
+            <a href="/new-organization">Add a new organization</a>
+        </p>
     </main>
 
     <%- include('partials/footer') %>
