@@ -3,8 +3,9 @@
 
     <head>
         <meta charset="UTF-8" />
-        <title><%= title %></title>
-
+        <title>
+            <%= title %>
+        </title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/css/main.css" />
@@ -20,6 +21,19 @@
             </ul>
         </nav>
 
-        <button id="darkModeToggle" class="floating-toggle" aria-label="Toggle dark mode">
-            🌙
-        </button>
+        <% const messages=flash(); %>
+            <% Object.keys(messages).forEach(type=> { %>
+                <% if (messages[type].length> 0) { %>
+                    <div class="alert <%= type %>">
+                        <% messages[type].forEach(msg=> { %>
+                            <p>
+                                <%= msg %>
+                            </p>
+                            <% }); %>
+                    </div>
+                    <% } %>
+                        <% }); %>
+
+                            <button id="darkModeToggle" class="floating-toggle" aria-label="Toggle dark mode">
+                                🌙
+                            </button>

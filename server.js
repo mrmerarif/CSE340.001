@@ -1,8 +1,17 @@
+// ------------------------------------------------------------
+// SESSION + FLASH MIDDLEWARE (MUST LOAD FIRST)
+// ------------------------------------------------------------
+// These two imports must be at the top because session and flash
+// need to run before ANY routes or templates are processed.
+import session from 'express-session';
+import flash from './src/middleware/flash.js';
+
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { testConnection } from './src/models/db.js';
 import router from './src/controllers/routes.js';
+
 
 // ------------------------------------------------------------
 // ENVIRONMENT SETUP
@@ -23,18 +32,52 @@ const app = express();
 
 
 // ------------------------------------------------------------
-// MIDDLEWARE CONFIGURATION
+// SESSION + FLASH MIDDLEWARE (CORRECT ORDER)
 // ------------------------------------------------------------
+// IMPORTANT: These MUST come before body parsing, static files,
+// routes, and anything that renders templates.
 
+// 1. Session middleware (stores session data for each user)
+app.use(session({
+  secret: 'your-secret-key',     // In a later activity you'll secure this
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 60 * 60 * 1000 } // Session expires after 1 hour
+}));
+
+// 2. Flash middleware (depends on session)
+app.use(flash);
+
+
+// ------------------------------------------------------------
+// BODY PARSING MIDDLEWARE
+// ------------------------------------------------------------
+// These two lines allow Express to read form data (POST requests).
+// Without them, req.body will always be undefined.
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+
+// ------------------------------------------------------------
+// STATIC FILES
+// ------------------------------------------------------------
 // Serve static files (CSS, images, JS) from the public directory.
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// ------------------------------------------------------------
+// VIEW ENGINE SETUP
+// ------------------------------------------------------------
 // Enable EJS as the templating engine.
 app.set('view engine', 'ejs');
 
 // Tell Express where to find your EJS templates.
 app.set('views', path.join(__dirname, 'src/views'));
 
+
+// ------------------------------------------------------------
+// DEVELOPMENT LOGGING
+// ------------------------------------------------------------
 // Log all incoming requests in development mode.
 app.use((req, res, next) => {
   if (NODE_ENV === 'development') {
@@ -49,19 +92,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// ------------------------------------------------------------
-// IMPORTANT: BODY PARSING MIDDLEWARE
-// ------------------------------------------------------------
-// These two lines allow Express to read form data (POST requests).
-// Without them, req.body will always be undefined.
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 // ------------------------------------------------------------
 // ROUTES
 // ------------------------------------------------------------
 // Use the imported router to handle all application routes.
 app.use(router);
+
 
 // ------------------------------------------------------------
 // ERROR HANDLING
@@ -90,6 +127,7 @@ app.use((err, req, res, next) => {
 
   res.status(status).render(`errors/${template}`, context);
 });
+
 
 // ------------------------------------------------------------
 // START THE SERVER

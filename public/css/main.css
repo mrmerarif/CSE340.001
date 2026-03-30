@@ -16,6 +16,9 @@
     --accent: var(--steel);
     --border: var(--mist);
 
+    /* NEW: consistent light gray background for form inputs */
+    --input-bg: var(--mist);
+
     --radius: 16px;
     --shadow-soft: 0 12px 32px rgba(21, 50, 67, 0.15);
     --shadow-card: 0 8px 20px rgba(40, 75, 99, 0.12);
@@ -36,6 +39,9 @@ body.dark {
     --primary: #F4F9E9;
     --accent: #284B63;
     --border: #1f3642;
+
+    /* NEW: dark-mode version of input background */
+    --input-bg: #1f2d36;
 }
 
 /* =========================
@@ -232,7 +238,6 @@ h2.section-title::after {
     gap: 0.85rem;
 }
 
-/* Pills for categories + projects */
 .categories-list li,
 .projects-list li {
     background: var(--sage);
@@ -251,26 +256,6 @@ h2.section-title::after {
     color: var(--cream);
     transform: translateY(-4px) scale(1.02);
     box-shadow: var(--glow);
-}
-
-/* =========================
-   🔵 NEW FIX — applies to your PROJECTS PAGE
-   because it uses .organizations-list, not .projects-list
-   ========================= */
-
-/* 🔵 Make project + organization links turn white on hover */
-.organizations-list li:hover a {
-    color: var(--cream) !important;
-}
-
-/* 🔵 Ensure visited links also turn white on hover */
-.organizations-list li:hover a:visited {
-    color: var(--cream) !important;
-}
-
-/* 🔵 Ensure active/clicked link is white on hover */
-.organizations-list li:hover a:active {
-    color: var(--cream) !important;
 }
 
 /* =========================
@@ -297,7 +282,6 @@ h2.section-title::after {
     border: 1px solid var(--mist);
     box-shadow: 0 4px 10px rgba(21, 50, 67, 0.08);
     transition: var(--transition);
-
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -341,6 +325,85 @@ h2.section-title::after {
 }
 
 /* =========================
+   Form layout + fields
+   ========================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+/* UPDATED: consistent light gray background for inputs */
+.form-input,
+.form-textarea,
+form input[type="text"],
+form input[type="email"],
+form textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    /* NEW */
+    color: var(--text);
+    font-size: 1rem;
+    box-shadow: 0 3px 8px rgba(21, 50, 67, 0.08);
+    transition: var(--transition);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(40, 75, 99, 0.25);
+    background: var(--bg-alt);
+}
+
+form textarea,
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Submit button */
+form button[type="submit"],
+.form-submit {
+    padding: 0.9rem 1.6rem;
+    border-radius: var(--radius);
+    border: none;
+    background: var(--steel);
+    color: var(--cream);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 14px rgba(40, 75, 99, 0.25);
+}
+
+form button[type="submit"]:hover,
+.form-submit:hover {
+    background: var(--midnight);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
+}
+
+/* =========================
    Section divider
    ========================= */
 .section-divider {
@@ -358,11 +421,9 @@ footer {
     text-align: center;
     font-size: 0.95rem;
     color: var(--cream);
-
     background: var(--midnight);
     border-top: 2px solid var(--steel);
     box-shadow: 0 -6px 18px rgba(21, 50, 67, 0.35);
-
     transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
@@ -419,4 +480,38 @@ img {
     nav ul {
         padding-inline: 1rem;
     }
+}
+
+/* =========================
+   Flash message styles
+   ========================= */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert.warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.alert.info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
 }
