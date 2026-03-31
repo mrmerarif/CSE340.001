@@ -27,8 +27,18 @@ import {
 import { 
     showCategoriesPage, 
     showCategoryDetailsPage,
-    showAssignCategoriesForm,        // <-- NEW
-    processAssignCategoriesForm      // <-- NEW
+    showAssignCategoriesForm,
+    processAssignCategoriesForm,
+
+    // NEW: Create Category
+    showNewCategoryForm,
+    createCategoryValidation,
+    processNewCategoryForm,
+
+    // NEW: Edit Category
+    showEditCategoryForm,
+    editCategoryValidation,
+    processEditCategoryForm
 } from './categories.js';
 
 // Error test route
@@ -74,6 +84,14 @@ router.post('/assign-categories/:projectId', processAssignCategoriesForm);
 // ------------------------------------------------------------
 router.get('/categories', showCategoriesPage);
 router.get('/category/:id', showCategoryDetailsPage);
+
+// NEW: Create Category
+router.get('/new-category', showNewCategoryForm);
+router.post('/new-category', createCategoryValidation, processNewCategoryForm);
+
+// NEW: Edit Category
+router.get('/edit-category/:id', showEditCategoryForm);
+router.post('/edit-category/:id', editCategoryValidation, processEditCategoryForm);
 
 // ------------------------------------------------------------
 // Error test route

@@ -5,28 +5,43 @@
             <%= title %>
         </h1>
 
-        <section class="new-organization-form">
-            <form action="/new-organization" method="POST">
+        <!-- Display server-side validation errors -->
+        <% if (errors && errors.length> 0) { %>
+            <div class="alert error">
+                <ul>
+                    <% errors.forEach(err=> { %>
+                        <li>
+                            <%= err.msg %>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+            <% } %>
 
-                <div class="form-group">
-                    <label for="name">Organization Name</label>
-                    <input type="text" id="name" name="name" class="form-input" required maxlength="150" />
-                </div>
+                <section class="new-organization-form">
+                    <form action="/new-organization" method="POST">
 
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" class="form-textarea" required
-                        maxlength="500"></textarea>
-                </div>
+                        <div class="form-group">
+                            <label for="name">Organization Name</label>
+                            <input type="text" id="name" name="name" class="form-input" required maxlength="150"
+                                value="<%= (values && values.name) || '' %>" />
+                        </div>
 
-                <div class="form-group">
-                    <label for="contactEmail">Contact Email</label>
-                    <input type="email" id="contactEmail" name="contactEmail" class="form-input" required />
-                </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" class="form-textarea" required
+                                maxlength="500"><%= (values && values.description) || '' %></textarea>
+                        </div>
 
-                <button type="submit" class="form-submit">Create Organization</button>
-            </form>
-        </section>
+                        <div class="form-group">
+                            <label for="contactEmail">Contact Email</label>
+                            <input type="email" id="contactEmail" name="contactEmail" class="form-input" required
+                                value="<%= (values && values.contactEmail) || '' %>" />
+                        </div>
+
+                        <button type="submit" class="form-submit">Create Organization</button>
+                    </form>
+                </section>
     </main>
 
     <%- include('partials/footer') %>

@@ -12,8 +12,6 @@ import db from './db.js';
 // ------------------------------------------------------------
 // Get ALL organizations
 // ------------------------------------------------------------
-// Returns a list of all organizations in the database.
-// Used on the main "Organizations" page.
 const getAllOrganizations = async () => {
     const query = `
         SELECT 
@@ -30,12 +28,9 @@ const getAllOrganizations = async () => {
     return result.rows;
 };
 
-
 // ------------------------------------------------------------
 // Get ONE organization by ID
 // ------------------------------------------------------------
-// Returns a single organization record, or null if not found.
-// Used on the organization details page.
 const getOrganizationDetails = async (organizationId) => {
     const query = `
         SELECT
@@ -48,18 +43,12 @@ const getOrganizationDetails = async (organizationId) => {
         WHERE organization_id = $1;
     `;
 
-    const query_params = [organizationId];
-    const result = await db.query(query, query_params);
-
+    const result = await db.query(query, [organizationId]);
     return result.rows.length > 0 ? result.rows[0] : null;
 };
 
-
 // ------------------------------------------------------------
 // Update an existing organization
-// ------------------------------------------------------------
-// This function updates an organization record in the database.
-// Called by the edit-organization controller.
 // ------------------------------------------------------------
 const updateOrganization = async (organizationId, name, description, contactEmail, logoFilename) => {
     const query = `
@@ -79,10 +68,6 @@ const updateOrganization = async (organizationId, name, description, contactEmai
     return result.rows[0].organization_id;
 };
 
-
-// ------------------------------------------------------------
-// Export all model functions
-// ------------------------------------------------------------
 export {
     getAllOrganizations,
     getOrganizationDetails,

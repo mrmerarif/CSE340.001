@@ -5,36 +5,47 @@
             <%= title %>
         </h1>
 
-        <section class="new-organization-form">
-            <form action="/edit-organization/<%= organizationDetails.organization_id %>" method="POST">
+        <!-- Display server-side validation errors -->
+        <% if (errors && errors.length> 0) { %>
+            <div class="alert error">
+                <ul>
+                    <% errors.forEach(err=> { %>
+                        <li>
+                            <%= err.msg %>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+            <% } %>
 
-                <div class="form-group">
-                    <label for="name">Organization Name</label>
-                    <input type="text" id="name" name="name" class="form-input" required maxlength="150"
-                        value="<%= organizationDetails.name %>" />
-                </div>
+                <section class="edit-organization-form">
+                    <form action="/edit-organization/<%= organizationDetails.organization_id %>" method="POST">
 
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description" name="description" class="form-textarea" required
-                        maxlength="500"><%= organizationDetails.description %></textarea>
-                </div>
+                        <div class="form-group">
+                            <label for="name">Organization Name</label>
+                            <input type="text" id="name" name="name" class="form-input" required maxlength="150"
+                                value="<%= values.name || organizationDetails.name %>" />
+                        </div>
 
-                <div class="form-group">
-                    <label for="contactEmail">Contact Email</label>
-                    <input type="email" id="contactEmail" name="contactEmail" class="form-input" required
-                        value="<%= organizationDetails.contact_email %>" />
-                </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" class="form-textarea" required
+                                maxlength="500"><%= values.description || organizationDetails.description %></textarea>
+                        </div>
 
-                <div class="form-group">
-                    <label for="logoFilename">Logo Filename</label>
-                    <input type="text" id="logoFilename" name="logoFilename" class="form-input" required
-                        value="<%= organizationDetails.logo_filename %>" />
-                </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Contact Email</label>
+                            <input type="email" id="contactEmail" name="contactEmail" class="form-input" required
+                                value="<%= values.contactEmail || organizationDetails.contactemail %>" />
+                        </div>
 
-                <button type="submit" class="form-submit">Update Organization</button>
-            </form>
-        </section>
+                        <button type="submit" class="form-submit">Update Organization</button>
+                    </form>
+                </section>
+
+                <p>
+                    <a href="/organization/<%= organizationDetails.organization_id %>">← Back to Organization</a>
+                </p>
     </main>
 
     <%- include('partials/footer') %>
