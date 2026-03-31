@@ -44,6 +44,13 @@
                 <% } else { %>
                     <p>No categories listed for this project.</p>
                     <% } %>
+
+                        <!-- NEW: Edit Categories link -->
+                        <p>
+                            <a href="/assign-categories/<%= project.project_id %>">
+                                Edit Categories
+                            </a>
+                        </p>
         </section>
 
         <p>

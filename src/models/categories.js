@@ -1,6 +1,18 @@
 import db from './db.js';
 
-// Get all categories (used on /categories page)
+// ------------------------------------------------------------
+// MODEL: Categories
+// ------------------------------------------------------------
+// This file contains all database queries related to categories,
+// including retrieving categories, retrieving categories for a
+// project, retrieving projects for a category, and updating the
+// many-to-many project_category table.
+// ------------------------------------------------------------
+
+
+// ------------------------------------------------------------
+// Get ALL categories (used on /categories page)
+// ------------------------------------------------------------
 export const getAllCategories = async () => {
   const query = `
     SELECT category_id, name
@@ -11,7 +23,9 @@ export const getAllCategories = async () => {
   return result.rows;
 };
 
-// Get a single category by ID (used on /category/:id)
+// ------------------------------------------------------------
+// Get ONE category by ID (used on /category/:id)
+// ------------------------------------------------------------
 export const getCategoryById = async (categoryId) => {
   const query = `
     SELECT category_id, name, description
@@ -22,7 +36,54 @@ export const getCategoryById = async (categoryId) => {
   return result.rows[0];
 };
 
-// Get all categories for a given project (used on /project/:id)
+// ------------------------------------------------------------
+// NEW: Insert a NEW category
+// ------------------------------------------------------------
+// Used by the Create Category form.
+// Throws an error if insertion fails.
+// ------------------------------------------------------------
+export const insertCategory = async (name) => {
+  const query = `
+    INSERT INTO category (name)
+    VALUES ($1)
+    RETURNING category_id, name;
+  `;
+
+  const result = await db.query(query, [name]);
+
+  if (result.rows.length === 0) {
+    throw new Error('Failed to insert category.');
+  }
+
+  return result.rows[0];
+};
+
+// ------------------------------------------------------------
+// NEW: Update an existing category
+// ------------------------------------------------------------
+// Used by the Edit Category form.
+// Throws an error if no rows are updated.
+// ------------------------------------------------------------
+export const updateCategory = async (categoryId, name) => {
+  const query = `
+    UPDATE category
+    SET name = $1
+    WHERE category_id = $2
+    RETURNING category_id, name;
+  `;
+
+  const result = await db.query(query, [name, categoryId]);
+
+  if (result.rows.length === 0) {
+    throw new Error('Category not found or update failed.');
+  }
+
+  return result.rows[0];
+};
+
+// ------------------------------------------------------------
+// Get ALL categories assigned to a project (used on /project/:id)
+// ------------------------------------------------------------
 export const getCategoriesByProjectId = async (projectId) => {
   const query = `
     SELECT c.category_id, c.name
@@ -36,7 +97,9 @@ export const getCategoriesByProjectId = async (projectId) => {
   return result.rows;
 };
 
-// Get all projects for a given category (used on /category/:id)
+// ------------------------------------------------------------
+// Get ALL projects assigned to a category (used on /category/:id)
+// ------------------------------------------------------------
 export const getProjectsByCategoryId = async (categoryId) => {
   const query = `
     SELECT 
@@ -56,4 +119,45 @@ export const getProjectsByCategoryId = async (categoryId) => {
   `;
   const result = await db.query(query, [categoryId]);
   return result.rows;
+};
+
+
+// ------------------------------------------------------------
+// INTERNAL HELPER: Assign ONE category to ONE project
+// ------------------------------------------------------------
+// This inserts a single row into the many-to-many table.
+// Not exported because it is only used internally by
+// updateCategoryAssignments.
+// ------------------------------------------------------------
+const assignCategoryToProject = async (projectId, categoryId) => {
+  const query = `
+    INSERT INTO project_category (project_id, category_id)
+    VALUES ($1, $2);
+  `;
+  await db.query(query, [projectId, categoryId]);
+};
+
+
+// ------------------------------------------------------------
+// UPDATE category assignments for a project
+// ------------------------------------------------------------
+// This function:
+// 1. Deletes all existing category assignments for the project
+// 2. Re-adds the selected category IDs
+//
+// Used by the Assign Categories form.
+// ------------------------------------------------------------
+export const updateCategoryAssignments = async (projectId, categoryIds) => {
+
+  // Step 1: Remove all existing assignments
+  const deleteQuery = `
+    DELETE FROM project_category
+    WHERE project_id = $1;
+  `;
+  await db.query(deleteQuery, [projectId]);
+
+  // Step 2: Add new assignments
+  for (const categoryId of categoryIds) {
+    await assignCategoryToProject(projectId, categoryId);
+  }
 };
