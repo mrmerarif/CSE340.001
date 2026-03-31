@@ -4,12 +4,15 @@ import express from 'express';
 import { showHomePage } from './index.js';
 
 // Organization controllers
-import { 
-    showOrganizationsPage, 
+import {
+    showOrganizationsPage,
     showOrganizationDetailsPage,
     showNewOrganizationForm,
-    processNewOrganizationForm
-} from './organizations.js';
+    processNewOrganizationForm,
+    organizationValidation,
+    showEditOrganizationForm,        // <-- FIXED
+    processEditOrganizationForm      // <-- FIXED
+} from '../controllers/organizations.js';
 
 // Project controllers
 import { showProjectsPage, showProjectDetailsPage } from './projects.js';
@@ -43,7 +46,16 @@ router.get('/test-error', testErrorPage);
 // NEW ORGANIZATION FORM
 router.get('/new-organization', showNewOrganizationForm);
 
-// PROCESS NEW ORGANIZATION FORM
-router.post('/new-organization', processNewOrganizationForm);
+// PROCESS NEW ORGANIZATION FORM (with validation)
+router.post('/new-organization', organizationValidation, processNewOrganizationForm);
+
+// EDIT ORGANIZATION FORM
+router.get('/edit-organization/:id', showEditOrganizationForm);
+
+// PROCESS EDIT ORGANIZATION FORM (with validation)
+router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
+
+
+
 
 export default router;

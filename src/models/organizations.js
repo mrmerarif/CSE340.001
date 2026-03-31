@@ -9,7 +9,6 @@
 
 import db from './db.js';
 
-
 // ------------------------------------------------------------
 // Get ALL organizations
 // ------------------------------------------------------------
@@ -57,9 +56,35 @@ const getOrganizationDetails = async (organizationId) => {
 
 
 // ------------------------------------------------------------
+// Update an existing organization
+// ------------------------------------------------------------
+// This function updates an organization record in the database.
+// Called by the edit-organization controller.
+// ------------------------------------------------------------
+const updateOrganization = async (organizationId, name, description, contactEmail, logoFilename) => {
+    const query = `
+      UPDATE organization
+      SET name = $1, description = $2, contact_email = $3, logo_filename = $4
+      WHERE organization_id = $5
+      RETURNING organization_id;
+    `;
+  
+    const params = [name, description, contactEmail, logoFilename, organizationId];
+    const result = await db.query(query, params);
+  
+    if (result.rows.length === 0) {
+      throw new Error('Organization not found');
+    }
+  
+    return result.rows[0].organization_id;
+};
+
+
+// ------------------------------------------------------------
 // Export all model functions
 // ------------------------------------------------------------
-export { 
-    getAllOrganizations, 
-    getOrganizationDetails
+export {
+    getAllOrganizations,
+    getOrganizationDetails,
+    updateOrganization
 };
