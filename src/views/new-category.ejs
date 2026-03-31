@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+    <main>
+        <h1>
+            <%= title %>
+        </h1>
+
+        <!-- Display server-side validation errors -->
+        <% if (errors && errors.length> 0) { %>
+            <div class="alert error">
+                <ul>
+                    <% errors.forEach(err=> { %>
+                        <li>
+                            <%= err.msg %>
+                        </li>
+                        <% }) %>
+                </ul>
+            </div>
+            <% } %>
+
+                <section class="new-category-form">
+                    <form action="/new-category" method="POST">
+
+                        <div class="form-group">
+                            <label for="name">Category Name</label>
+                            <input type="text" id="name" name="name" class="form-input" required maxlength="100"
+                                value="<%= (values && values.name) || '' %>" />
+                        </div>
+
+                        <button type="submit" class="form-submit">Create Category</button>
+                    </form>
+                </section>
+    </main>
+
+    <%- include('partials/footer') %>
