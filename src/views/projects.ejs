@@ -12,9 +12,10 @@
                 <ul>
                     <% projects.forEach(project=> { %>
                         <li>
-                            <% const dateObj=new Date(project.date); const formattedDate=dateObj.toLocaleDateString('en-US', { year: 'numeric' ,
-                                month: 'short' , day: 'numeric' }); %>
-                        
+                            <% const dateObj=new Date(project.date); const
+                                formattedDate=dateObj.toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
+                                day: 'numeric' }); %>
+
                                 <%= formattedDate %>:
                                     <a href="/project/<%= project.project_id %>">
                                         <%= project.title %>
@@ -25,18 +26,18 @@
                                     </a>
                                     )
                         </li>
-                          
-                          
                         <% }) %>
                 </ul>
                 <% } else { %>
                     <p>No projects found.</p>
                     <% } %>
         </section>
-        <p><a href="/new-project">Add a New Service Project</a></p>
+
+        <p>
+            <!-- UPDATED: added action-button class -->
+            <a href="/new-project" class="action-button">Add a New Service Project</a>
+        </p>
 
     </main>
 
     <%- include("partials/footer") %>
-
-    

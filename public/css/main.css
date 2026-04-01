@@ -522,3 +522,98 @@ img {
 .alert {
     padding: 15px;
     margin-bottom: 20px;
+}
+
+/* ============================================================
+   NEW MINIMAL ADDITIONS — SAFE, NON‑BREAKING, MATCH YOUR STYLE
+   ============================================================ */
+
+/* Action button (matches your existing button style) */
+.action-button {
+    display: inline-block;
+    padding: 0.9rem 1.6rem;
+    border-radius: var(--radius);
+    background: var(--steel);
+    color: var(--cream);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 14px rgba(40, 75, 99, 0.25);
+}
+
+.action-button:hover,
+.action-button:focus-visible {
+    background: var(--accent);
+    color: var(--cream);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
+    outline: none;
+}
+
+/* Spacing helpers for bottom links */
+.add-organization-link,
+.add-project-link,
+.add-category-link,
+.edit-category-link,
+.back-link {
+    margin-top: 1.5rem;
+}
+
+/* Light list styling for new project/category lists */
+.project-items,
+.category-items,
+.category-project-items {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.project-item,
+.category-item,
+.category-project-item {
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    background: var(--sage);
+    border: 1px solid var(--mist);
+    box-shadow: 0 3px 8px rgba(21, 50, 67, 0.08);
+    transition: var(--transition);
+}
+
+.project-item:hover,
+.category-item:hover,
+.category-project-item:hover {
+    background: var(--accent);
+    color: var(--cream);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
+}
+
+.project-item:hover a,
+.category-item:hover a,
+.category-project-item:hover a {
+    color: var(--cream) !important;
+}
+
+/* Checkbox styling */
+.category-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+}
