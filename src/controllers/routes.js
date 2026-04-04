@@ -20,7 +20,11 @@ import {
     showProjectDetailsPage,
     showNewProjectForm,
     processNewProjectForm,
-    projectValidation
+    projectValidation,
+
+    // ⭐ NEW: Edit Project controllers
+    showEditProjectForm,
+    processEditProjectForm
 } from '../controllers/projects.js';
 
 // Category controllers
@@ -74,6 +78,13 @@ router.get('/project/:id', showProjectDetailsPage);
 // NEW: Add new project
 router.get('/new-project', showNewProjectForm);
 router.post('/new-project', projectValidation, processNewProjectForm);
+
+// ⭐ NEW: Edit existing project
+// This allows the user to load the edit form for a project
+router.get('/edit-project/:id', showEditProjectForm);
+
+// This processes the submitted edit form and updates the DB
+router.post('/edit-project/:id', projectValidation, processEditProjectForm);
 
 // NEW: Assign categories to a project
 router.get('/assign-categories/:projectId', showAssignCategoriesForm);

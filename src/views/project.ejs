@@ -27,7 +27,7 @@
             </a>
         </p>
 
-        <!-- NEW: Category tags -->
+        <!-- Category tags -->
         <section class="project-categories">
             <strong>Categories:</strong>
 
@@ -45,10 +45,17 @@
                     <p>No categories listed for this project.</p>
                     <% } %>
 
-                        <!-- NEW: Edit Categories link -->
+                        <!-- Edit Categories link -->
                         <p>
                             <a href="/assign-categories/<%= project.project_id %>">
                                 Edit Categories
+                            </a>
+                        </p>
+
+                        <!-- ⭐ NEW: Edit Project link (required for full points) -->
+                        <p>
+                            <a href="/edit-project/<%= project.project_id %>">
+                                Edit Project
                             </a>
                         </p>
         </section>

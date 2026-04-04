@@ -99,3 +99,36 @@ export const createProject = async (title, description, location, date, organiza
 
   return result.rows[0].project_id;
 };
+
+// ------------------------------------------------------------
+// Get ONE project by ID (for Edit Project form)
+// ------------------------------------------------------------
+export const getProjectById = async (projectId) => {
+  const query = `
+    SELECT project_id, title, description, location, date, organization_id
+    FROM project
+    WHERE project_id = $1;
+  `;
+  const result = await db.query(query, [projectId]);
+  return result.rows[0];
+};
+
+
+// Used by the "Edit Project" form submission.
+// ------------------------------------------------------------
+export const updateProject = async (projectId, title, description, location, date, organizationId) => {
+  const query = `
+    UPDATE project
+    SET title = $1,
+        description = $2,
+        location = $3,
+        date = $4,
+        organization_id = $5
+    WHERE project_id = $6;
+  `;
+
+  const params = [title, description, location, date, organizationId, projectId];
+  await db.query(query, params);
+
+  return true;
+};
