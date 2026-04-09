@@ -1,5 +1,5 @@
 /* =========================
-   Color system (light mode)
+   ROOT VARIABLES
    ========================= */
 :root {
     --midnight: #153243;
@@ -12,594 +12,216 @@
     --bg-alt: #ffffff;
     --text: var(--midnight);
     --muted: #4a4f4d;
-    --primary: var(--midnight);
     --accent: var(--steel);
     --border: var(--mist);
 
-    /* NEW: consistent light gray background for form inputs */
     --input-bg: var(--mist);
 
-    --radius: 16px;
-    --shadow-soft: 0 12px 32px rgba(21, 50, 67, 0.15);
-    --shadow-card: 0 8px 20px rgba(40, 75, 99, 0.12);
-    --glow: 0 0 18px rgba(40, 75, 99, 0.35);
-
-    --transition: 0.3s ease;
+    --radius: 14px;
+    --transition: 0.25s ease;
     --max-width: 960px;
 }
 
 /* =========================
-   Dark mode (high contrast)
+   DARK MODE
    ========================= */
 body.dark {
     --bg: #0f1e27;
     --bg-alt: #13232e;
     --text: #F4F9E9;
     --muted: #d0d4d2;
-    --primary: #F4F9E9;
-    --accent: #284B63;
     --border: #1f3642;
-
-    /* NEW: dark-mode version of input background */
     --input-bg: #1f2d36;
 }
 
 /* =========================
-   Reset / base
+   BASE
    ========================= */
-*,
-*::before,
-*::after {
+* {
     box-sizing: border-box;
 }
 
-html,
 body {
     margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background:
-        radial-gradient(circle at 20% 20%, var(--cream), var(--mist) 40%, var(--sage) 100%),
-        url("https://www.transparenttextures.com/patterns/white-wall.png");
-    background-size: cover, 300px;
-    background-blend-mode: soft-light;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
+
     display: flex;
     flex-direction: column;
-    animation: bgShift 18s ease-in-out infinite alternate;
-}
-
-@keyframes bgShift {
-    0% {
-        background-position: 0% 0%;
-    }
-
-    100% {
-        background-position: 100% 100%;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.001ms !important;
-        animation-iteration-count: 1 !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
-    }
+    min-height: 100vh;
 }
 
 /* =========================
-   Layout
+   LAYOUT
    ========================= */
 main {
-    width: 100%;
     max-width: var(--max-width);
-    margin: 2rem auto 3rem;
+    margin: 2rem auto;
     padding: 2rem;
     background: var(--bg-alt);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-    transition: var(--transition);
-}
+    flex: 1;
 
-main:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-soft);
+    /* 👇 gives space so button never overlaps footer */
+    padding-bottom: 4rem;
 }
 
 /* =========================
-   Navigation
+   NAVIGATION
    ========================= */
 nav {
-    background: rgba(21, 50, 67, 0.9);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--midnight);
     position: sticky;
     top: 0;
     z-index: 20;
-    box-shadow: 0 4px 14px rgba(21, 50, 67, 0.35);
 }
 
 nav ul {
-    list-style: none;
-    margin: 0 auto;
-    padding: 0.9rem 1.5rem;
-    max-width: var(--max-width);
     display: flex;
     gap: 1rem;
-    align-items: center;
+    padding: 1rem;
+    margin: 0;
+    list-style: none;
     overflow-x: auto;
-}
-
-nav a {
-    text-decoration: none;
-    color: var(--cream);
-    font-weight: 600;
-    padding: 0.5rem 1.1rem;
-    border-radius: 999px;
-    transition: var(--transition);
     white-space: nowrap;
 }
 
-nav a:hover,
-nav a:focus-visible {
-    background: rgba(255, 255, 255, 0.18);
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: var(--glow);
-    outline: none;
-}
-
-/* =========================
-   Floating dark mode toggle
-   ========================= */
-.floating-toggle {
-    position: fixed;
-    right: 1.25rem;
-    bottom: 1.25rem;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    border: none;
-    background: var(--midnight);
+nav a {
     color: var(--cream);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 18px rgba(21, 50, 67, 0.4);
-    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    text-decoration: none;
     transition: var(--transition);
-    z-index: 30;
+    flex-shrink: 0;
 }
 
-.floating-toggle:hover,
-.floating-toggle:focus-visible {
-    background: var(--steel);
-    transform: translateY(-3px);
-    box-shadow: var(--glow);
-    outline: none;
+nav a:hover {
+    background: var(--accent);
+    color: var(--cream);
 }
 
 /* =========================
-   Typography
+   GLOBAL LINKS
    ========================= */
-h1,
-h2,
-h3 {
-    margin-top: 0;
-    color: var(--primary);
-}
-
-p {
-    line-height: 1.6;
-    color: var(--muted);
-}
-
-/* =========================
-   Global link styling (NEW)
-   ========================= */
-/* Ensures all regular links match the site's visual identity */
 a {
     color: var(--midnight);
     text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
 }
 
-/* Hover state matches your pill hover behavior */
-a:hover,
-a:focus-visible {
-    background: var(--accent);
-    color: var(--cream) !important;
-    padding: 0.2rem 0.4rem;
-    border-radius: 6px;
-    box-shadow: var(--glow);
-    outline: none;
-}
-
-/* Ensure visited links also turn white on hover */
-a:visited:hover {
-    color: var(--cream) !important;
-}
-
-/* =========================
-   Section headers
-   ========================= */
-h2.section-title {
-    position: relative;
-    padding-bottom: 0.4rem;
-    margin-bottom: 1rem;
-    color: var(--accent);
-}
-
-h2.section-title::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-}
-
-/* =========================
-   Lists / pills
-   ========================= */
-.categories-list,
-.organizations-list,
-.projects-list {
-    margin-top: 1.75rem;
-}
-
-.categories-list ul,
-.organizations-list ul,
-.projects-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 0.85rem;
-}
-
-.categories-list li,
-.projects-list li {
-    background: var(--sage);
-    border-radius: 999px;
-    padding: 0.7rem 1.2rem;
-    color: var(--midnight);
-    font-weight: 600;
-    border: 1px solid var(--mist);
-    box-shadow: 0 4px 10px rgba(21, 50, 67, 0.08);
-    transition: var(--transition);
-}
-
-.categories-list li:hover,
-.projects-list li:hover {
-    background: var(--accent);
+a:hover {
     color: var(--cream);
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: var(--glow);
-}
-
-/* Make links inside list items turn white on hover */
-.categories-list li:hover a,
-.projects-list li:hover a,
-.organizations-list li:hover a {
-    color: var(--cream) !important;
+    background: var(--accent);
 }
 
 /* =========================
-   Organizations list (logos + text)
+   LISTS
    ========================= */
-.organizations-list {
-    margin-top: 1.75rem;
-}
-
+.projects-list ul,
+.categories-list ul,
 .organizations-list ul {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 1rem;
-}
-
-.organizations-list li {
-    background: var(--sage);
-    border-radius: 16px;
-    padding: 0.9rem 1.2rem;
-    color: var(--midnight);
-    font-weight: 600;
-    border: 1px solid var(--mist);
-    box-shadow: 0 4px 10px rgba(21, 50, 67, 0.08);
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
     gap: 0.75rem;
 }
 
-.organizations-list li img {
-    width: 64px;
-    height: auto;
-    border-radius: 8px;
-    flex-shrink: 0;
+.projects-list li,
+.categories-list li,
+.organizations-list li {
+    background: var(--sage);
+    border-radius: 999px;
+    padding: 0.75rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    word-break: break-word;
+    transition: var(--transition);
 }
 
+.projects-list li:hover,
+.categories-list li:hover,
 .organizations-list li:hover {
     background: var(--accent);
     color: var(--cream);
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: var(--glow);
+}
+
+.projects-list li:hover a,
+.categories-list li:hover a,
+.organizations-list li:hover a {
+    color: var(--cream) !important;
 }
 
 /* =========================
-   Buttons
+   ORGANIZATION LOGOS
    ========================= */
-.button {
-    display: inline-block;
-    padding: 0.8rem 1.6rem;
+.organizations-list li img {
+    width: 50px;
+    border-radius: 8px;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+.button,
+button {
+    padding: 0.75rem 1.4rem;
     border-radius: var(--radius);
+    border: none;
     background: var(--steel);
     color: var(--cream);
-    font-weight: 600;
-    text-decoration: none;
+    cursor: pointer;
     transition: var(--transition);
-    box-shadow: 0 6px 14px rgba(40, 75, 99, 0.25);
 }
 
 .button:hover,
-.button:focus-visible {
-    background: var(--midnight);
-    transform: translateY(-3px);
-    box-shadow: var(--glow);
-    outline: none;
+button:hover {
+    background: var(--accent);
 }
 
 /* =========================
-   Form layout + fields
+   FORMS
    ========================= */
 form {
+    max-width: 420px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    gap: 1.2rem;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.3rem;
 }
 
-.form-group label {
+label {
     font-weight: 600;
-    color: var(--primary);
-    font-size: 1rem;
 }
 
-/* UPDATED: consistent light gray background for inputs */
-.form-input,
-.form-textarea,
-form input[type="text"],
-form input[type="email"],
-form textarea {
+input,
+textarea,
+select {
     width: 100%;
-    padding: 0.85rem 1rem;
+    padding: 0.7rem 0.9rem;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: var(--input-bg);
-    /* NEW */
-    color: var(--text);
-    font-size: 1rem;
-    box-shadow: 0 3px 8px rgba(21, 50, 67, 0.08);
-    transition: var(--transition);
 }
 
-.form-input:focus,
-.form-textarea:focus,
-form input[type="text"]:focus,
-form input[type="email"]:focus,
-form textarea:focus {
+input:focus,
+textarea:focus,
+select:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(40, 75, 99, 0.25);
-    background: var(--bg-alt);
-}
-
-form textarea,
-.form-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
-
-/* Submit button */
-form button[type="submit"],
-.form-submit {
-    padding: 0.9rem 1.6rem;
-    border-radius: var(--radius);
-    border: none;
-    background: var(--steel);
-    color: var(--cream);
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 6px 14px rgba(40, 75, 99, 0.25);
-}
-
-form button[type="submit"]:hover,
-.form-submit:hover {
-    background: var(--midnight);
-    transform: translateY(-3px);
-    box-shadow: var(--glow);
 }
 
 /* =========================
-   Section divider
+   CHECKBOX FIX
    ========================= */
-.section-divider {
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--sage), transparent);
-    margin: 2.5rem 0;
-}
-
-/* =========================
-   Footer
-   ========================= */
-footer {
-    margin-top: auto;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    font-size: 0.95rem;
-    color: var(--cream);
-    background: var(--midnight);
-    border-top: 2px solid var(--steel);
-    box-shadow: 0 -6px 18px rgba(21, 50, 67, 0.35);
-    transition: background 0.4s ease, box-shadow 0.4s ease;
-}
-
-footer p {
-    color: var(--cream) !important;
-}
-
-footer:hover {
-    background: var(--steel);
-    box-shadow: 0 -10px 24px rgba(21, 50, 67, 0.45);
-}
-
-.footer-icons a {
-    color: var(--cream);
-}
-
-.footer-icons a:hover {
-    color: var(--sage);
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
-}
-
-/* =========================
-   Images
-   ========================= */
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* =========================
-   Scroll fade sections
-   ========================= */
-.fade-section {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.fade-section.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* =========================
-   Responsive
-   ========================= */
-@media (max-width: 640px) {
-    main {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
-
-    nav ul {
-        padding-inline: 1rem;
-    }
-}
-
-/* =========================
-   Flash message styles
-   ========================= */
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-}
-
-/* ============================================================
-   NEW MINIMAL ADDITIONS — SAFE, NON‑BREAKING, MATCH YOUR STYLE
-   ============================================================ */
-
-/* Action button (matches your existing button style) */
-.action-button {
-    display: inline-block;
-    padding: 0.9rem 1.6rem;
-    border-radius: var(--radius);
-    background: var(--steel);
-    color: var(--cream);
-    font-weight: 700;
-    font-size: 1rem;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 6px 14px rgba(40, 75, 99, 0.25);
-}
-
-.action-button:hover,
-.action-button:focus-visible {
-    background: var(--accent);
-    color: var(--cream);
-    transform: translateY(-3px);
-    box-shadow: var(--glow);
-    outline: none;
-}
-
-/* Spacing helpers for bottom links */
-.add-organization-link,
-.add-project-link,
-.add-category-link,
-.edit-category-link,
-.back-link {
-    margin-top: 1.5rem;
-}
-
-/* Light list styling for new project/category lists */
-.project-items,
-.category-items,
-.category-project-items {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0;
-    display: grid;
-    gap: 0.75rem;
-}
-
-.project-item,
-.category-item,
-.category-project-item {
-    padding: 0.6rem 1rem;
-    border-radius: 12px;
-    background: var(--sage);
-    border: 1px solid var(--mist);
-    box-shadow: 0 3px 8px rgba(21, 50, 67, 0.08);
-    transition: var(--transition);
-}
-
-.project-item:hover,
-.category-item:hover,
-.category-project-item:hover {
-    background: var(--accent);
-    color: var(--cream);
-    transform: translateY(-3px);
-    box-shadow: var(--glow);
-}
-
-.project-item:hover a,
-.category-item:hover a,
-.category-project-item:hover a {
-    color: var(--cream) !important;
-}
-
-/* Checkbox styling */
 .category-checkbox-group {
     display: flex;
     flex-direction: column;
@@ -609,11 +231,50 @@ img {
 .form-checkbox {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
 }
 
 .form-checkbox input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
+    margin: 0;
     accent-color: var(--accent);
+}
+
+/* =========================
+   🔥 DARK MODE BUTTON FINAL
+   ========================= */
+.floating-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+
+    background: var(--midnight);
+    color: var(--cream);
+
+    border: 2px solid white;
+    cursor: pointer;
+
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+
+    z-index: 100;
+}
+
+.floating-toggle:hover {
+    background: var(--accent);
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+footer {
+    margin-top: 0;
+    padding: 2rem;
+    text-align: center;
+    background: var(--midnight);
+    color: var(--cream);
 }

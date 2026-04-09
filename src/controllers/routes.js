@@ -22,7 +22,7 @@ import {
     processNewProjectForm,
     projectValidation,
 
-    // ⭐ NEW: Edit Project controllers
+    // Edit Project controllers
     showEditProjectForm,
     processEditProjectForm
 } from '../controllers/projects.js';
@@ -34,16 +34,29 @@ import {
     showAssignCategoriesForm,
     processAssignCategoriesForm,
 
-    // NEW: Create Category
+    // Create Category
     showNewCategoryForm,
     createCategoryValidation,
     processNewCategoryForm,
 
-    // NEW: Edit Category
+    // Edit Category
     showEditCategoryForm,
     editCategoryValidation,
     processEditCategoryForm
 } from './categories.js';
+
+// User registration + login controllers
+import { 
+    showUserRegistrationForm, 
+    processUserRegistrationForm,
+    showLoginForm,
+    processLoginForm,
+    processLogout,
+    requireLogin,
+    requireRole,
+    showDashboard,
+    showUsersPage      // Admin-only: Show list of all users
+} from '../controllers/users.js';
 
 // Error test route
 import { testErrorPage } from './errors.js';
@@ -61,13 +74,13 @@ router.get('/', showHomePage);
 router.get('/organizations', showOrganizationsPage);
 router.get('/organization/:id', showOrganizationDetailsPage);
 
-// New organization
-router.get('/new-organization', showNewOrganizationForm);
-router.post('/new-organization', organizationValidation, processNewOrganizationForm);
+// Admin-only: New organization
+router.get('/new-organization', requireRole('admin'), showNewOrganizationForm);
+router.post('/new-organization', requireRole('admin'), organizationValidation, processNewOrganizationForm);
 
-// Edit organization
-router.get('/edit-organization/:id', showEditOrganizationForm);
-router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
+// Admin-only: Edit organization
+router.get('/edit-organization/:id', requireRole('admin'), showEditOrganizationForm);
+router.post('/edit-organization/:id', requireRole('admin'), organizationValidation, processEditOrganizationForm);
 
 // ------------------------------------------------------------
 // Projects
@@ -75,20 +88,17 @@ router.post('/edit-organization/:id', organizationValidation, processEditOrganiz
 router.get('/projects', showProjectsPage);
 router.get('/project/:id', showProjectDetailsPage);
 
-// NEW: Add new project
-router.get('/new-project', showNewProjectForm);
-router.post('/new-project', projectValidation, processNewProjectForm);
+// Admin-only: Add new project
+router.get('/new-project', requireRole('admin'), showNewProjectForm);
+router.post('/new-project', requireRole('admin'), projectValidation, processNewProjectForm);
 
-// ⭐ NEW: Edit existing project
-// This allows the user to load the edit form for a project
-router.get('/edit-project/:id', showEditProjectForm);
+// Admin-only: Edit existing project
+router.get('/edit-project/:id', requireRole('admin'), showEditProjectForm);
+router.post('/edit-project/:id', requireRole('admin'), projectValidation, processEditProjectForm);
 
-// This processes the submitted edit form and updates the DB
-router.post('/edit-project/:id', projectValidation, processEditProjectForm);
-
-// NEW: Assign categories to a project
-router.get('/assign-categories/:projectId', showAssignCategoriesForm);
-router.post('/assign-categories/:projectId', processAssignCategoriesForm);
+//Admin-only: Assign categories to a project
+router.get('/assign-categories/:projectId', requireRole('admin'), showAssignCategoriesForm);
+router.post('/assign-categories/:projectId', requireRole('admin'), processAssignCategoriesForm);
 
 // ------------------------------------------------------------
 // Categories
@@ -96,13 +106,36 @@ router.post('/assign-categories/:projectId', processAssignCategoriesForm);
 router.get('/categories', showCategoriesPage);
 router.get('/category/:id', showCategoryDetailsPage);
 
-// NEW: Create Category
-router.get('/new-category', showNewCategoryForm);
-router.post('/new-category', createCategoryValidation, processNewCategoryForm);
+//Admin-only: Create Category
+router.get('/new-category', requireRole('admin'), showNewCategoryForm);
+router.post('/new-category', requireRole('admin'), createCategoryValidation, processNewCategoryForm);
 
-// NEW: Edit Category
-router.get('/edit-category/:id', showEditCategoryForm);
-router.post('/edit-category/:id', editCategoryValidation, processEditCategoryForm);
+// Admin-only: Edit Category
+router.get('/edit-category/:id', requireRole('admin'), showEditCategoryForm);
+router.post('/edit-category/:id', requireRole('admin'), editCategoryValidation, processEditCategoryForm);
+
+// ------------------------------------------------------------
+// User Registration Routes
+// ------------------------------------------------------------
+router.get('/register', showUserRegistrationForm);
+router.post('/register', processUserRegistrationForm);
+
+// ------------------------------------------------------------
+// User Login + Logout Routes
+// ------------------------------------------------------------
+router.get('/login', showLoginForm);
+router.post('/login', processLoginForm);
+router.get('/logout', processLogout);
+
+// ------------------------------------------------------------
+// Protected Dashboard Route
+// ------------------------------------------------------------
+router.get('/dashboard', requireLogin, showDashboard);
+
+// ------------------------------------------------------------
+// NEW: Admin-only Users Page
+// ------------------------------------------------------------
+router.get('/users', requireRole('admin'), showUsersPage);
 
 // ------------------------------------------------------------
 // Error test route

@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-    <main>
+    <main class="page page-category-edit">
         <h1>
             <%= title %>
         </h1>
@@ -19,12 +19,12 @@
             <% } %>
 
                 <section class="edit-category-form">
-                    <form action="/edit-category/<%= categoryId %>" method="POST">
+                    <form action="/edit-category/<%= categoryId %>" method="POST" class="form-container">
 
                         <div class="form-group">
                             <label for="name">Category Name</label>
                             <input type="text" id="name" name="name" class="form-input" required maxlength="100"
-                                value="<%= values.name %>" />
+                                value="<%= (values && values.name) || '' %>" />
                         </div>
 
                         <button type="submit" class="form-submit">Update Category</button>

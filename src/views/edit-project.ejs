@@ -4,37 +4,71 @@
         <h1>Edit Project: <%= project.title %>
         </h1>
 
-        <form action="/edit-project/<%= project.project_id %>" method="POST">
+        <!-- Safe server-side validation error handling -->
+        <% const formErrors=(typeof errors !=='undefined' && Array.isArray(errors)) ? errors : []; %>
 
-            <label for="title">Title</label>
-            <input type="text" id="title" name="title" value="<%= project.title %>" required>
+            <% if (formErrors.length> 0) { %>
+                <div class="alert error">
+                    <ul>
+                        <% formErrors.forEach(err=> { %>
+                            <li>
+                                <%= err.msg %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+                <% } %>
 
-            <label for="description">Description</label>
-            <textarea id="description" name="description" required><%= project.description %></textarea>
+                    <!-- Safe values object -->
+                    <% const formValues=(typeof values !=='undefined' && values) ? values : {}; %>
 
-            <label for="location">Location</label>
-            <input type="text" id="location" name="location" value="<%= project.location %>" required>
+                        <form action="/edit-project/<%= project.project_id %>" method="POST" class="form-container">
 
-            <label for="date">Date</label>
-            <input type="date" id="date" name="date" value="<%= project.date.toISOString().split('T')[0] %>" required>
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" id="title" name="title" class="form-input" required
+                                    value="<%= formValues.title || project.title %>" />
+                            </div>
 
-            <label for="organizationId">Organization</label>
-            <select id="organizationId" name="organizationId" required>
-                <% organizations.forEach(org=> { %>
-                    <option value="<%= org.organization_id %>" <%=org.organization_id===project.organization_id
-                        ? "selected" : "" %>
-                        >
-                        <%= org.name %>
-                    </option>
-                    <% }) %>
-            </select>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" class="form-textarea"
+                                    required><%= formValues.description || project.description %></textarea>
+                            </div>
 
-            <button type="submit">Save Changes</button>
-        </form>
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" id="location" name="location" class="form-input" required
+                                    value="<%= formValues.location || project.location %>" />
+                            </div>
 
-        <p>
-            <a href="/project/<%= project.project_id %>">← Back to Project Details</a>
-        </p>
+                            <div class="form-group">
+                                <label for="date">Date</label>
+                                <input type="date" id="date" name="date" class="form-input" required
+                                    value="<%= formValues.date || project.date.toISOString().split('T')[0] %>" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="organizationId">Organization</label>
+                                <select id="organizationId" name="organizationId" class="form-input" required>
+                                    <% organizations.forEach(org=> { %>
+                                        <option value="<%= org.organization_id %>" <%=( (formValues.organizationId &&
+                                            formValues.organizationId==org.organization_id) ||
+                                            (!formValues.organizationId &&
+                                            org.organization_id===project.organization_id) ) ? "selected" : "" %>
+                                            >
+                                            <%= org.name %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="form-submit">Save Changes</button>
+                        </form>
+
+                        <p>
+                            <a href="/project/<%= project.project_id %>">← Back to Project Details</a>
+                        </p>
     </main>
 
     <%- include("partials/footer") %>

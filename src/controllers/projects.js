@@ -1,24 +1,18 @@
 // ------------------------------------------------------------
 // CONTROLLER: Projects
 // ------------------------------------------------------------
-// This file contains all controller functions related to
-// displaying projects, showing project details, rendering
-// the "new project" form, processing new project submissions,
-// and NOW editing existing projects.
-// ------------------------------------------------------------
 
 import { 
   getAllProjects, 
   getProjectDetails,
   createProject,
-  updateProject,            // <-- NEW: Update existing project in DB
-  getProjectById            // <-- NEW: Load project for edit form
+  updateProject,
+  getProjectById
 } from '../models/projects.js';
 
 import { getCategoriesByProjectId } from '../models/categories.js';
 import { getAllOrganizations } from '../models/organizations.js';
 
-// Validation tools
 import { body, validationResult } from 'express-validator';
 
 // ------------------------------------------------------------
@@ -53,25 +47,23 @@ const projectValidation = [
 ];
 
 // ------------------------------------------------------------
-// Controller: List all projects
+// List all projects
 // ------------------------------------------------------------
 const showProjectsPage = async (req, res, next) => {
   try {
     const projects = await getAllProjects();
-    const title = 'Service Projects';
-    res.render('projects', { title, projects });
+    res.render('projects', { title: 'Service Projects', projects });
   } catch (err) {
     next(err);
   }
 };
 
 // ------------------------------------------------------------
-// Controller: Show details for a single project
+// Show project details
 // ------------------------------------------------------------
 const showProjectDetailsPage = async (req, res, next) => {
   try {
     const projectId = req.params.id;
-
     const project = await getProjectDetails(projectId);
 
     if (!project) {
@@ -81,33 +73,48 @@ const showProjectDetailsPage = async (req, res, next) => {
     }
 
     const categories = await getCategoriesByProjectId(projectId);
-    const title = project.title;
 
-    res.render('project', { title, project, categories });
+    res.render('project', { 
+      title: project.title, 
+      project, 
+      categories 
+    });
+
   } catch (err) {
     next(err);
   }
 };
 
 // ------------------------------------------------------------
-// Controller: Show the "New Project" form
+// Show NEW PROJECT form
 // ------------------------------------------------------------
 const showNewProjectForm = async (req, res) => {
   const organizations = await getAllOrganizations();
-  const title = 'Add New Service Project';
 
-  res.render('new-project', { title, organizations });
+  res.render('new-project', { 
+    title: 'Add New Service Project',
+    organizations,
+    errors: [],
+    values: {}
+  });
 };
 
 // ------------------------------------------------------------
-// Controller: Process the "New Project" form submission
+// Process NEW PROJECT form
 // ------------------------------------------------------------
 const processNewProjectForm = async (req, res) => {
 
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
-    errors.array().forEach(error => req.flash('error', error.msg));
-    return res.redirect('/new-project');
+    const organizations = await getAllOrganizations();
+
+    return res.render('new-project', {
+      title: 'Add New Service Project',
+      organizations,
+      errors: errors.array(),
+      values: req.body
+    });
   }
 
   const { title, description, location, date, organizationId } = req.body;
@@ -132,13 +139,13 @@ const processNewProjectForm = async (req, res) => {
 };
 
 // ------------------------------------------------------------
-// NEW: Controller — Show the "Edit Project" form
+// Show EDIT PROJECT form
 // ------------------------------------------------------------
 const showEditProjectForm = async (req, res, next) => {
   try {
     const projectId = req.params.id;
-
     const project = await getProjectById(projectId);
+
     if (!project) {
       const err = new Error('Project Not Found');
       err.status = 404;
@@ -146,9 +153,14 @@ const showEditProjectForm = async (req, res, next) => {
     }
 
     const organizations = await getAllOrganizations();
-    const title = `Edit Project: ${project.title}`;
 
-    res.render('edit-project', { title, project, organizations });
+    res.render('edit-project', {
+      title: `Edit Project: ${project.title}`,
+      project,
+      organizations,
+      errors: [],
+      values: {}
+    });
 
   } catch (err) {
     next(err);
@@ -156,17 +168,26 @@ const showEditProjectForm = async (req, res, next) => {
 };
 
 // ------------------------------------------------------------
-// NEW: Controller — Process the "Edit Project" form submission
+// Process EDIT PROJECT form
 // ------------------------------------------------------------
 const processEditProjectForm = async (req, res) => {
 
   const errors = validationResult(req);
+  const projectId = req.params.id;
+
   if (!errors.isEmpty()) {
-    errors.array().forEach(error => req.flash('error', error.msg));
-    return res.redirect(`/edit-project/${req.params.id}`);
+    const project = await getProjectById(projectId);
+    const organizations = await getAllOrganizations();
+
+    return res.render('edit-project', {
+      title: `Edit Project: ${project.title}`,
+      project,
+      organizations,
+      errors: errors.array(),
+      values: req.body
+    });
   }
 
-  const projectId = req.params.id;
   const { title, description, location, date, organizationId } = req.body;
 
   try {
@@ -190,7 +211,7 @@ const processEditProjectForm = async (req, res) => {
 };
 
 // ------------------------------------------------------------
-// Export all controllers
+// Export controllers
 // ------------------------------------------------------------
 export { 
   showProjectsPage, 
@@ -198,8 +219,6 @@ export {
   showNewProjectForm,
   processNewProjectForm,
   projectValidation,
-
-  // NEW: Edit project controllers
   showEditProjectForm,
   processEditProjectForm
 };

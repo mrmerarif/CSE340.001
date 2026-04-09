@@ -1,4 +1,9 @@
 // ------------------------------------------------------------
+// LOAD ENVIRONMENT VARIABLES (MUST BE FIRST)
+// ------------------------------------------------------------
+import 'dotenv/config';
+
+// ------------------------------------------------------------
 // SESSION + FLASH MIDDLEWARE (MUST LOAD FIRST)
 // ------------------------------------------------------------
 // These two imports must be at the top because session and flash
@@ -16,28 +21,18 @@ import router from './src/controllers/routes.js';
 // ------------------------------------------------------------
 // ENVIRONMENT SETUP
 // ------------------------------------------------------------
-// Determine whether the app is running in development or production.
-// This affects logging and error visibility.
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
-
-// Define the port number the server will listen on.
 const PORT = process.env.PORT || 3000;
 
-// Recreate __filename and __dirname for ES modules.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Create the Express application instance.
 const app = express();
 
 
 // ------------------------------------------------------------
 // SESSION + FLASH MIDDLEWARE (CORRECT ORDER)
 // ------------------------------------------------------------
-// IMPORTANT: These MUST come before body parsing, static files,
-// routes, and anything that renders templates.
-
-// 1. Session middleware (stores session data for each user)
 app.use(session({
   secret: 'your-secret-key',     // In a later activity you'll secure this
   resave: false,
@@ -45,15 +40,13 @@ app.use(session({
   cookie: { maxAge: 60 * 60 * 1000 } // Session expires after 1 hour
 }));
 
-// 2. Flash middleware (depends on session)
-app.use(flash);
+// ⭐ FIXED: flash() MUST be called
+app.use(flash());
 
 
 // ------------------------------------------------------------
 // BODY PARSING MIDDLEWARE
 // ------------------------------------------------------------
-// These two lines allow Express to read form data (POST requests).
-// Without them, req.body will always be undefined.
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -61,24 +54,19 @@ app.use(express.json());
 // ------------------------------------------------------------
 // STATIC FILES
 // ------------------------------------------------------------
-// Serve static files (CSS, images, JS) from the public directory.
 app.use(express.static(path.join(__dirname, 'public')));
 
 
 // ------------------------------------------------------------
 // VIEW ENGINE SETUP
 // ------------------------------------------------------------
-// Enable EJS as the templating engine.
 app.set('view engine', 'ejs');
-
-// Tell Express where to find your EJS templates.
 app.set('views', path.join(__dirname, 'src/views'));
 
 
 // ------------------------------------------------------------
 // DEVELOPMENT LOGGING
 // ------------------------------------------------------------
-// Log all incoming requests in development mode.
 app.use((req, res, next) => {
   if (NODE_ENV === 'development') {
     console.log(`${req.method} ${req.url}`);
@@ -86,8 +74,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// Make NODE_ENV available inside all EJS templates.
+
+// ------------------------------------------------------------
+// UPDATED: Make login state, user, and NODE_ENV available to all templates
+// ------------------------------------------------------------
 app.use((req, res, next) => {
+  res.locals.isLoggedIn = false;
+
+  if (req.session && req.session.user) {
+    res.locals.isLoggedIn = true;
+  }
+
+  // Make full user object available (including role_name)
+  res.locals.user = req.session.user || null;
+
   res.locals.NODE_ENV = NODE_ENV;
   next();
 });
@@ -96,22 +96,18 @@ app.use((req, res, next) => {
 // ------------------------------------------------------------
 // ROUTES
 // ------------------------------------------------------------
-// Use the imported router to handle all application routes.
 app.use(router);
 
 
 // ------------------------------------------------------------
 // ERROR HANDLING
 // ------------------------------------------------------------
-
-// Catch-all route for 404 (page not found) errors.
 app.use((req, res, next) => {
   const err = new Error('Page Not Found');
   err.status = 404;
   next(err);
 });
 
-// Global error handler for all server errors.
 app.use((err, req, res, next) => {
   console.error('Error occurred:', err.message);
   console.error('Stack trace:', err.stack);

@@ -7,28 +7,58 @@
 
         <h2>Assign Categories</h2>
 
-        <form action="/assign-categories/<%= projectId %>" method="POST">
+        <!-- Safe server-side validation error handling -->
+        <% const formErrors=(typeof errors !=='undefined' && Array.isArray(errors)) ? errors : []; %>
 
-            <div class="form-group">
-                <% categories.forEach(category=> { %>
-                    <div class="form-checkbox">
-                        <input type="checkbox" id="category-<%= category.category_id %>" name="categoryIds"
-                            value="<%= category.category_id %>" <%=assignedCategories.some(ac=> ac.category_id ===
-                        category.category_id) ? 'checked' : '' %>
-                        />
-                        <label for="category-<%= category.category_id %>">
-                            <%= category.name %>
-                        </label>
-                    </div>
-                    <% }) %>
-            </div>
+            <% if (formErrors.length> 0) { %>
+                <div class="alert error">
+                    <ul>
+                        <% formErrors.forEach(err=> { %>
+                            <li>
+                                <%= err.msg %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+                <% } %>
 
-            <button type="submit" class="form-submit">Update Categories</button>
-        </form>
+                    <!-- Safe values object -->
+                    <% const formValues=(typeof values !=='undefined' && values) ? values : {}; %>
 
-        <p>
-            <a href="/project/<%= projectId %>">← Back to Project</a>
-        </p>
+                        <form action="/assign-categories/<%= projectId %>" method="POST" class="form-container">
+
+                            <div class="form-group category-checkbox-group">
+
+                                <% categories.forEach(category=> { %>
+
+                                    <% // Determine if this category should be checked const
+                                        isChecked=(formValues.categoryIds && Array.isArray(formValues.categoryIds) &&
+                                        formValues.categoryIds.includes(String(category.category_id))) ||
+                                        (!formValues.categoryIds && assignedCategories.some(ac=> ac.category_id ===
+                                        category.category_id));
+                                        %>
+
+                                        <div class="form-checkbox">
+                                            <input type="checkbox" id="category-<%= category.category_id %>"
+                                                name="categoryIds" value="<%= category.category_id %>" <%=isChecked
+                                                ? "checked" : "" %>
+                                            />
+
+                                            <label for="category-<%= category.category_id %>">
+                                                <%= category.name %>
+                                            </label>
+                                        </div>
+
+                                        <% }) %>
+
+                            </div>
+
+                            <button type="submit" class="form-submit">Update Categories</button>
+                        </form>
+
+                        <p>
+                            <a href="/project/<%= projectId %>">← Back to Project</a>
+                        </p>
     </main>
 
     <%- include('partials/footer') %>

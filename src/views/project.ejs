@@ -45,19 +45,19 @@
                     <p>No categories listed for this project.</p>
                     <% } %>
 
-                        <!-- Edit Categories link -->
-                        <p>
-                            <a href="/assign-categories/<%= project.project_id %>">
-                                Edit Categories
-                            </a>
-                        </p>
+                        <% if (user && user.role_name==='admin' ) { %>
+                            <p>
+                                <a href="/assign-categories/<%= project.project_id %>">
+                                    Edit Categories
+                                </a>
+                            </p>
 
-                        <!-- ⭐ NEW: Edit Project link (required for full points) -->
-                        <p>
-                            <a href="/edit-project/<%= project.project_id %>">
-                                Edit Project
-                            </a>
-                        </p>
+                            <p>
+                                <a href="/edit-project/<%= project.project_id %>">
+                                    Edit Project
+                                </a>
+                            </p>
+                            <% } %>
         </section>
 
         <p>

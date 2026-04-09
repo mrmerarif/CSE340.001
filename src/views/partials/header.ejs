@@ -14,10 +14,32 @@
     <body>
         <nav>
             <ul>
+                <!-- ALWAYS VISIBLE -->
                 <li><a href="/">Home</a></li>
                 <li><a href="/organizations">Organizations</a></li>
                 <li><a href="/projects">Projects</a></li>
                 <li><a href="/categories">Categories</a></li>
+
+                <% if (isLoggedIn) { %>
+                    <!-- LOGGED-IN USERS -->
+                    <li><a href="/dashboard">Dashboard</a></li>
+
+                    <% if (user && user.role_name==='admin' ) { %>
+                        <!-- ADMIN-ONLY LINKS -->
+                        <li><a href="/users">Users</a></li>
+                        <li><a href="/new-organization">Add Organization</a></li>
+                        <li><a href="/new-project">Add Project</a></li>
+                        <li><a href="/new-category">Add Category</a></li>
+                        <% } %>
+
+                            <!-- LOGOUT -->
+                            <li><a href="/logout">Logout</a></li>
+
+                            <% } else { %>
+                                <!-- NOT LOGGED IN -->
+                                <li><a href="/register">Register</a></li>
+                                <li><a href="/login">Login</a></li>
+                                <% } %>
             </ul>
         </nav>
 
@@ -29,10 +51,10 @@
                             <p>
                                 <%= msg %>
                             </p>
-                            <% }); %>
+                            <% }) %>
                     </div>
                     <% } %>
-                        <% }); %>
+                        <% }) %>
 
                             <button id="darkModeToggle" class="floating-toggle" aria-label="Toggle dark mode">
                                 🌙

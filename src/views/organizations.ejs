@@ -13,23 +13,26 @@
                     <li class="organization-item">
                         <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo"
                             class="organization-logo">
+
                         <div class="organization-info">
                             <a href="/organization/<%= organization.organization_id %>" class="organization-name">
                                 <%= organization.name %>
                             </a>
+
                             <span class="organization-email">
                                 <%= organization.contact_email %>
                             </span>
                         </div>
                     </li>
-                    <% }); %>
+                    <% }) %>
             </ul>
         </section>
 
-        <p class="add-organization-link">
-            <!-- UPDATED: added action-button class -->
-            <a href="/new-organization" class="action-button">Add a new organization</a>
-        </p>
+        <% if (user && user.role_name==='admin' ) { %>
+            <p class="add-organization-link">
+                <a href="/new-organization" class="action-button">Add a new organization</a>
+            </p>
+            <% } %>
     </main>
 
     <%- include('partials/footer') %>
