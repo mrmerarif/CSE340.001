@@ -4,19 +4,17 @@
 import 'dotenv/config';
 
 // ------------------------------------------------------------
-// SESSION + FLASH MIDDLEWARE (MUST LOAD FIRST)
+// CORE IMPORTS
 // ------------------------------------------------------------
-// These two imports must be at the top because session and flash
-// need to run before ANY routes or templates are processed.
-import session from 'express-session';
-import flash from './src/middleware/flash.js';
-
 import express from 'express';
+import session from 'express-session';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { testConnection } from './src/models/db.js';
 import router from './src/controllers/routes.js';
+import { testConnection } from './src/models/db.js';
 
+// Flash middleware
+import flash from './src/middleware/flash.js';
 
 // ------------------------------------------------------------
 // ENVIRONMENT SETUP
@@ -29,40 +27,39 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-
 // ------------------------------------------------------------
-// SESSION + FLASH MIDDLEWARE (CORRECT ORDER)
+// BODY PARSING (MUST COME BEFORE SESSION + FLASH)
 // ------------------------------------------------------------
-app.use(session({
-  secret: 'your-secret-key',     // In a later activity you'll secure this
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 60 * 60 * 1000 } // Session expires after 1 hour
-}));
-
-// ⭐ FIXED: flash() MUST be called
-app.use(flash());
-
-
-// ------------------------------------------------------------
-// BODY PARSING MIDDLEWARE
-// ------------------------------------------------------------
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// ------------------------------------------------------------
+// SESSION (MUST COME BEFORE FLASH)
+// ------------------------------------------------------------
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'default-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
+  })
+);
+
+// ------------------------------------------------------------
+// FLASH (MUST COME AFTER SESSION — DO NOT CALL flash())
+// ------------------------------------------------------------
+app.use(flash);
 
 // ------------------------------------------------------------
 // STATIC FILES
 // ------------------------------------------------------------
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 // ------------------------------------------------------------
 // VIEW ENGINE SETUP
 // ------------------------------------------------------------
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
-
 
 // ------------------------------------------------------------
 // DEVELOPMENT LOGGING
@@ -74,30 +71,20 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // ------------------------------------------------------------
-// UPDATED: Make login state, user, and NODE_ENV available to all templates
+// MAKE LOGIN STATE AVAILABLE TO ALL VIEWS
 // ------------------------------------------------------------
 app.use((req, res, next) => {
-  res.locals.isLoggedIn = false;
-
-  if (req.session && req.session.user) {
-    res.locals.isLoggedIn = true;
-  }
-
-  // Make full user object available (including role_name)
-  res.locals.user = req.session.user || null;
-
+  res.locals.isLoggedIn = Boolean(req.session?.user);
+  res.locals.user = req.session?.user || null;
   res.locals.NODE_ENV = NODE_ENV;
   next();
 });
 
-
 // ------------------------------------------------------------
 // ROUTES
 // ------------------------------------------------------------
-app.use(router);
-
+app.use('/', router);
 
 // ------------------------------------------------------------
 // ERROR HANDLING
@@ -115,25 +102,22 @@ app.use((err, req, res, next) => {
   const status = err.status || 500;
   const template = status === 404 ? '404' : '500';
 
-  const context = {
+  res.status(status).render(`errors/${template}`, {
     title: status === 404 ? 'Page Not Found' : 'Server Error',
     error: err.message,
-    stack: err.stack
-  };
-
-  res.status(status).render(`errors/${template}`, context);
+    stack: err.stack,
+  });
 });
 
-
 // ------------------------------------------------------------
-// START THE SERVER
+// START SERVER
 // ------------------------------------------------------------
 app.listen(PORT, async () => {
   try {
     await testConnection();
-    console.log(`Server is running at http://127.0.0.1:${PORT}`);
+    console.log(`Server running at http://127.0.0.1:${PORT}`);
     console.log(`Environment: ${NODE_ENV}`);
   } catch (error) {
-    console.error('Error connecting to the database:', error);
+    console.error('Database connection error:', error);
   }
 });
