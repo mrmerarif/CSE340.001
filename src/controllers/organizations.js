@@ -1,26 +1,18 @@
-// ------------------------------------------------------------
-// CONTROLLER: Organizations
-// ------------------------------------------------------------
-// This file contains all controller functions related to
-// displaying organizations, showing organization details,
-// rendering the "new organization" form, and processing
-// form submissions to create or update an organization.
-// ------------------------------------------------------------
-
 import { 
     getAllOrganizations,
     getOrganizationDetails,
-    updateOrganization
+    updateOrganization,
+    createOrganization
 } from '../models/organizations.js';
 
-import { createOrganization } from '../models/organization.js';
 import { getProjectsByOrganizationId } from '../models/projects.js';
 import { body, validationResult } from 'express-validator';
 
+
 // ------------------------------------------------------------
-// Validation rules
+// VALIDATION
 // ------------------------------------------------------------
-const organizationValidation = [
+export const organizationValidation = [
     body('name')
         .trim()
         .notEmpty().withMessage('Organization name is required')
@@ -39,44 +31,53 @@ const organizationValidation = [
         .isEmail().withMessage('Please provide a valid email address')
 ];
 
+
 // ------------------------------------------------------------
-// Show list of organizations
+// SHOW ALL ORGANIZATIONS
 // ------------------------------------------------------------
-const showOrganizationsPage = async (req, res) => {
+export const showOrganizationsPage = async (req, res) => {
     const organizations = await getAllOrganizations();
-    res.render('organizations', { title: 'Our Partner Organizations', organizations });
-};
 
-// ------------------------------------------------------------
-// Show organization details
-// ------------------------------------------------------------
-const showOrganizationDetailsPage = async (req, res) => {
-    const organizationId = req.params.id;
-    const organizationDetails = await getOrganizationDetails(organizationId);
-    const projects = await getProjectsByOrganizationId(organizationId);
-
-    res.render('organization', { 
-        title: 'Organization Details', 
-        organizationDetails, 
-        projects 
+    res.render('organizations', {
+        title: 'Our Partner Organizations',
+        organizations
     });
 };
 
+
 // ------------------------------------------------------------
-// Show NEW organization form
+// SHOW ORGANIZATION DETAILS
 // ------------------------------------------------------------
-const showNewOrganizationForm = async (req, res) => {
-    res.render('new-organization', { 
+export const showOrganizationDetailsPage = async (req, res) => {
+    const organizationId = req.params.id;
+
+    const organizationDetails = await getOrganizationDetails(organizationId);
+    const projects = await getProjectsByOrganizationId(organizationId);
+
+    res.render('organization', {
+        title: 'Organization Details',
+        organizationDetails,
+        projects
+    });
+};
+
+
+// ------------------------------------------------------------
+// NEW ORGANIZATION FORM
+// ------------------------------------------------------------
+export const showNewOrganizationForm = (req, res) => {
+    res.render('new-organization', {
         title: 'Add New Organization',
         errors: [],
         values: {}
     });
 };
 
+
 // ------------------------------------------------------------
-// Process NEW organization form
+// PROCESS NEW ORGANIZATION
 // ------------------------------------------------------------
-const processNewOrganizationForm = async (req, res) => {
+export const processNewOrganizationForm = async (req, res) => {
     const results = validationResult(req);
     const { name, description, contactEmail } = req.body;
 
@@ -101,34 +102,35 @@ const processNewOrganizationForm = async (req, res) => {
     res.redirect(`/organization/${organizationId}`);
 };
 
+
 // ------------------------------------------------------------
-// Show EDIT organization form
+// EDIT ORGANIZATION FORM
 // ------------------------------------------------------------
-const showEditOrganizationForm = async (req, res) => {
+export const showEditOrganizationForm = async (req, res) => {
     const organizationId = req.params.id;
     const organizationDetails = await getOrganizationDetails(organizationId);
 
-    res.render('edit-organization', { 
+    res.render('edit-organization', {
         title: 'Edit Organization',
         errors: [],
         values: {
             name: organizationDetails.name,
             description: organizationDetails.description,
-            contactEmail: organizationDetails.contact_email   // FIXED
+            contactEmail: organizationDetails.contact_email
         },
         organizationDetails
     });
 };
 
+
 // ------------------------------------------------------------
-// Process EDIT organization form
+// PROCESS EDIT ORGANIZATION
 // ------------------------------------------------------------
-const processEditOrganizationForm = async (req, res) => {
+export const processEditOrganizationForm = async (req, res) => {
     const results = validationResult(req);
     const organizationId = req.params.id;
     const { name, description, contactEmail } = req.body;
 
-    // FIX: Always provide a logo filename
     const logoFilename = 'placeholder-logo.png';
 
     if (!results.isEmpty()) {
@@ -145,19 +147,9 @@ const processEditOrganizationForm = async (req, res) => {
         name,
         description,
         contactEmail,
-        logoFilename   // FIXED
+        logoFilename
     );
 
     req.flash('success', 'Organization updated successfully!');
     res.redirect(`/organization/${organizationId}`);
-};
-
-export {
-    showOrganizationsPage,
-    showOrganizationDetailsPage,
-    showNewOrganizationForm,
-    processNewOrganizationForm,
-    organizationValidation,
-    showEditOrganizationForm,
-    processEditOrganizationForm
 };

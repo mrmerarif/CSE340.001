@@ -14,9 +14,34 @@
             <%= email %>
         </p>
 
-        <% if (user && user.role_name==='admin' ) { %>
-            <p><a href="/users">View All Users</a></p>
-            <% } %>
+        <% const projects=(typeof volunteeredProjects !=='undefined' && Array.isArray(volunteeredProjects)) ?
+            volunteeredProjects : []; %>
+
+            <section>
+                <h2>Your Volunteer Projects</h2>
+
+                <% if (projects.length> 0) { %>
+                    <ul>
+                        <% projects.forEach(p=> { %>
+                            <li>
+                                <strong>
+                                    <%= p.title %>
+                                </strong>
+                                — <%= p.location %>
+                                    (<%= new Date(p.date).toLocaleDateString() %>)
+
+                                        <br>
+
+                                        <a href="/project/<%= p.project_id %>">View</a>
+                                        |
+                                        <a href="/project/<%= p.project_id %>/unvolunteer">Remove</a>
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <% } else { %>
+                        <p>You are not volunteering for any projects yet.</p>
+                        <% } %>
+            </section>
     </main>
 
     <%- include('partials/footer') %>

@@ -5,7 +5,6 @@
             <%= title %>
         </h1>
 
-        <!-- Safe server-side validation error handling -->
         <% const formErrors=(typeof errors !=='undefined' && Array.isArray(errors)) ? errors : []; %>
 
             <% if (formErrors.length> 0) { %>
@@ -20,52 +19,51 @@
                 </div>
                 <% } %>
 
-                    <!-- Safe values object -->
-                    <% const formValues=(typeof values !=='undefined' && values) ? values : {}; %>
+                    <% const values=(typeof project !=='undefined' && project) ? project : {}; %>
 
                         <section class="new-project-form">
                             <form action="/new-project" method="POST">
 
                                 <div class="form-group">
-                                    <label for="title">Project Title</label>
-                                    <input type="text" id="title" name="title" class="form-input" required
-                                        maxlength="150" value="<%= formValues.title || '' %>" />
+                                    <label>Project Title</label>
+                                    <input type="text" name="title" required value="<%= values.title || '' %>">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="description">Description</label>
-                                    <textarea id="description" name="description" class="form-textarea" required
-                                        maxlength="500"><%= formValues.description || '' %></textarea>
+                                    <label>Description</label>
+                                    <textarea name="description" required><%= values.description || '' %></textarea>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="location">Location</label>
-                                    <input type="text" id="location" name="location" class="form-input" required
-                                        maxlength="255" value="<%= formValues.location || '' %>" />
+                                    <label>Location</label>
+                                    <input type="text" name="location" required value="<%= values.location || '' %>">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="date">Date</label>
-                                    <input type="date" id="date" name="date" class="form-input" required
-                                        value="<%= formValues.date || '' %>" />
+                                    <label>Date</label>
+                                    <input type="date" name="date" required value="<%= values.date || '' %>">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="organizationId">Organization</label>
-                                    <select id="organizationId" name="organizationId" class="form-input" required>
-                                        <option value="">Select an organization</option>
+                                    <label>Organization</label>
 
-                                        <% organizations.forEach(org=> { %>
-                                            <option value="<%= org.organization_id %>"
-                                                <%=(formValues.organizationId==org.organization_id) ? 'selected' : '' %>
-                                                >
-                                                <%= org.name %>
-                                            </option>
-                                            <% }) %>
+                                    <!-- IMPORTANT: must match controller -->
+                                    <select name="organization_id" required>
+                                        <option value="">Select organization</option>
+
+                                        <% if (typeof organizations !=='undefined' ) { %>
+                                            <% organizations.forEach(org=> { %>
+                                                <option value="<%= org.organization_id %>">
+                                                    <%= org.name %>
+                                                </option>
+                                                <% }) %>
+                                                    <% } %>
+
                                     </select>
                                 </div>
 
-                                <button type="submit" class="form-submit">Create A Project</button>
+                                <button type="submit">Create Project</button>
+
                             </form>
                         </section>
     </main>

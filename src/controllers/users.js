@@ -1,5 +1,18 @@
 import bcrypt from 'bcrypt';
-import { createUser, authenticateUser, getAllUsers } from '../models/users.js';
+
+import { 
+    createUser, 
+    authenticateUser, 
+    getAllUsers 
+} from '../models/users.js';
+
+// ------------------------------------------------------
+// FIXED IMPORT (case-sensitive path)
+// ------------------------------------------------------
+import { 
+    getUserVolunteeredProjects 
+} from '../models/projectvolunteers.js';
+
 
 // ------------------------------------------------------
 // Show Registration Form
@@ -7,6 +20,7 @@ import { createUser, authenticateUser, getAllUsers } from '../models/users.js';
 const showUserRegistrationForm = (req, res) => {
     res.render('register', { title: 'Register' });
 };
+
 
 // ------------------------------------------------------
 // Process Registration Form
@@ -39,7 +53,7 @@ const processUserRegistrationForm = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
 
-        const userId = await createUser(name, email, passwordHash);
+        await createUser(name, email, passwordHash);
 
         req.flash('success', 'Registration successful! Please log in.');
         res.redirect('/');
@@ -49,19 +63,20 @@ const processUserRegistrationForm = async (req, res) => {
 
         if (error.code === '23505') {
             if (error.detail && error.detail.includes('email')) {
-                req.flash('error', 'That email is already registered. Please use a different one.');
+                req.flash('error', 'That email is already registered.');
             } else if (error.detail && error.detail.includes('name')) {
-                req.flash('error', 'That username is already taken. Please choose another.');
+                req.flash('error', 'That username is already taken.');
             } else {
-                req.flash('error', 'Duplicate value detected. Please try again.');
+                req.flash('error', 'Duplicate value detected.');
             }
             return res.redirect('/register');
         }
 
-        req.flash('error', 'An error occurred during registration. Please try again.');
+        req.flash('error', 'An error occurred during registration.');
         res.redirect('/register');
     }
 };
+
 
 // ------------------------------------------------------
 // Show Login Form
@@ -69,6 +84,7 @@ const processUserRegistrationForm = async (req, res) => {
 const showLoginForm = (req, res) => {
     res.render('login', { title: 'Login' });
 };
+
 
 // ------------------------------------------------------
 // Process Login Form
@@ -96,10 +112,11 @@ const processLoginForm = async (req, res) => {
 
     } catch (error) {
         console.error('Error during login:', error);
-        req.flash('error', 'An error occurred during login. Please try again.');
+        req.flash('error', 'An error occurred during login.');
         res.redirect('/login');
     }
 };
+
 
 // ------------------------------------------------------
 // Process Logout
@@ -113,29 +130,31 @@ const processLogout = (req, res) => {
     res.redirect('/login');
 };
 
+
 // ------------------------------------------------------
 // Require Login
 // ------------------------------------------------------
 const requireLogin = (req, res, next) => {
     if (!req.session || !req.session.user) {
-        req.flash('error', 'You must be logged in to access that page.');
+        req.flash('error', 'You must be logged in.');
         return res.redirect('/login');
     }
     next();
 };
 
+
 // ------------------------------------------------------
-// Require Specific Role
+// Require Role
 // ------------------------------------------------------
 const requireRole = (role) => {
     return (req, res, next) => {
         if (!req.session || !req.session.user) {
-            req.flash('error', 'You must be logged in to access this page.');
+            req.flash('error', 'You must be logged in.');
             return res.redirect('/login');
         }
 
         if (req.session.user.role_name !== role) {
-            req.flash('error', 'You do not have permission to access this page.');
+            req.flash('error', 'Access denied.');
             return res.redirect('/dashboard');
         }
 
@@ -143,21 +162,26 @@ const requireRole = (role) => {
     };
 };
 
+
 // ------------------------------------------------------
-// Show Dashboard
+// DASHBOARD (Volunteer Feature)
 // ------------------------------------------------------
-const showDashboard = (req, res) => {
+const showDashboard = async (req, res) => {
     const user = req.session.user;
+
+    const volunteeredProjects = await getUserVolunteeredProjects(user.id);
 
     res.render('dashboard', {
         title: 'Dashboard',
         name: user.name,
-        email: user.email
+        email: user.email,
+        volunteeredProjects
     });
 };
 
+
 // ------------------------------------------------------
-// ⭐ NEW: Show All Users (Admin Only)
+// SHOW USERS (Admin)
 // ------------------------------------------------------
 const showUsersPage = async (req, res) => {
     try {
@@ -175,8 +199,9 @@ const showUsersPage = async (req, res) => {
     }
 };
 
+
 // ------------------------------------------------------
-// Export Controller Functions
+// EXPORTS
 // ------------------------------------------------------
 export {
     showUserRegistrationForm,
@@ -187,5 +212,5 @@ export {
     requireLogin,
     requireRole,
     showDashboard,
-    showUsersPage   // ⭐ NEW EXPORT
+    showUsersPage
 };
