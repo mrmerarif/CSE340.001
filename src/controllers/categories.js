@@ -16,8 +16,8 @@ import {
   getProjectsByCategoryId,
   getCategoriesByProjectId,
   updateCategoryAssignments,
-  insertCategory,          // <-- NEW
-  updateCategory           // <-- NEW
+  insertCategory,          
+  updateCategory           
 } from '../models/categories.js';
 
 import { getProjectDetails } from '../models/projects.js';
@@ -60,7 +60,7 @@ const showCategoryDetailsPage = async (req, res, next) => {
 
 
 // ------------------------------------------------------------
-// NEW: Show Create Category form (/new-category)
+// Show Create Category form (/new-category)
 // ------------------------------------------------------------
 const showNewCategoryForm = (req, res) => {
   const title = 'Create New Category';
@@ -69,7 +69,7 @@ const showNewCategoryForm = (req, res) => {
 
 
 // ------------------------------------------------------------
-// NEW: Process Create Category form (POST /new-category)
+// Process Create Category form (POST /new-category)
 // ------------------------------------------------------------
 const createCategoryValidation = [
   body('name')
@@ -83,7 +83,7 @@ const processNewCategoryForm = async (req, res, next) => {
   const errors = validationResult(req);
   const { name } = req.body;
 
-  // Server-side min length validation (assignment requirement)
+  // Server-side min length validation
   if (name.trim().length < 3) {
     errors.errors.push({
       msg: 'Category name must be at least 3 characters.',
@@ -111,7 +111,7 @@ const processNewCategoryForm = async (req, res, next) => {
 
 
 // ------------------------------------------------------------
-// NEW: Show Edit Category form (/edit-category/:id)
+// Show Edit Category form (/edit-category/:id)
 // ------------------------------------------------------------
 const showEditCategoryForm = async (req, res, next) => {
   try {
@@ -140,7 +140,7 @@ const showEditCategoryForm = async (req, res, next) => {
 
 
 // ------------------------------------------------------------
-// NEW: Process Edit Category form (POST /edit-category/:id)
+// Edit Category form (POST /edit-category/:id)
 // ------------------------------------------------------------
 const editCategoryValidation = [
   body('name')
@@ -235,12 +235,12 @@ export {
   showCategoriesPage,
   showCategoryDetailsPage,
 
-  // NEW: Create Category
+  // Create Category
   showNewCategoryForm,
   createCategoryValidation,
   processNewCategoryForm,
 
-  // NEW: Edit Category
+  // Edit Category
   showEditCategoryForm,
   editCategoryValidation,
   processEditCategoryForm,

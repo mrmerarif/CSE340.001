@@ -139,7 +139,7 @@ const assignCategoryToProject = async (projectId, categoryId) => {
 
 
 // ------------------------------------------------------------
-// UPDATE category assignments for a project
+// UPDATE category
 // ------------------------------------------------------------
 // This function:
 // 1. Deletes all existing category assignments for the project

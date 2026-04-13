@@ -19,8 +19,9 @@
                 </div>
                 <% } %>
 
-                    <!-- Safe values object -->
-                    <% const formValues=(typeof values !=='undefined' && values) ? values : {}; %>
+                    <!-- use locals.formValues -->
+                    <% const formValues=(typeof locals.formValues !=='undefined' && locals.formValues) ?
+                        locals.formValues : {}; %>
 
                         <form action="/edit-project/<%= project.project_id %>" method="POST" class="form-container">
 
@@ -51,15 +52,23 @@
                             <div class="form-group">
                                 <label for="organizationId">Organization</label>
                                 <select id="organizationId" name="organizationId" class="form-input" required>
-                                    <% organizations.forEach(org=> { %>
-                                        <option value="<%= org.organization_id %>" <%=( (formValues.organizationId &&
-                                            formValues.organizationId==org.organization_id) ||
-                                            (!formValues.organizationId &&
-                                            org.organization_id===project.organization_id) ) ? "selected" : "" %>
-                                            >
-                                            <%= org.name %>
-                                        </option>
-                                        <% }) %>
+
+                                    <% if (organizations && organizations.length> 0) { %>
+
+                                        <% organizations.forEach(org=> { %>
+                                            <option value="<%= org.organization_id %>" <%=( (formValues.organizationId
+                                                && formValues.organizationId==org.organization_id) ||
+                                                (!formValues.organizationId &&
+                                                org.organization_id===project.organization_id) ) ? "selected" : "" %>
+                                                >
+                                                <%= org.name %>
+                                            </option>
+                                            <% }) %>
+
+                                                <% } else { %>
+                                                    <option value="">No organizations available</option>
+                                                    <% } %>
+
                                 </select>
                             </div>
 

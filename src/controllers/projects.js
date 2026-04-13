@@ -143,7 +143,7 @@ export const processNewProjectForm = async (req, res, next) => {
 
 
 // ------------------------------------------------------------
-// EDIT PROJECT (FIXED - FULL SAFE VERSION)
+// EDIT PROJECT 
 // ------------------------------------------------------------
 export const showEditProjectForm = async (req, res, next) => {
   try {
@@ -176,7 +176,7 @@ export const showEditProjectForm = async (req, res, next) => {
 
 
 // ------------------------------------------------------------
-// PROCESS EDIT PROJECT (FIXED MATCHING FORM FIELD)
+// PROCESS EDIT PROJECT (MATCHING FORM FIELD)
 // ------------------------------------------------------------
 export const processEditProjectForm = async (req, res, next) => {
   try {

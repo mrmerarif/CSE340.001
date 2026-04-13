@@ -112,7 +112,7 @@ CREATE TABLE users (
 
 
 -- ============================================================
--- NEW TABLE: project_volunteers (added at the bottom as requested)
+-- NEW TABLE: project_volunteers 
 -- ============================================================
 CREATE TABLE project_volunteers (
     project_id INT NOT NULL,

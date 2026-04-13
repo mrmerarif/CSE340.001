@@ -11,7 +11,7 @@ import {
 export const volunteerForProject = async (req, res) => {
   const projectId = req.params.id;
 
-  // FIX: support both id formats
+  // support both id formats
   const userId = req.session.user?.user_id || req.session.user?.id;
 
   if (!userId) {

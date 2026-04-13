@@ -81,7 +81,7 @@ const authenticateUser = async (email, password) => {
 };
 
 // ------------------------------------------------------
-// ⭐ NEW: Get all users (admin-only page)
+//  Get all users (admin-only page)
 // ------------------------------------------------------
 const getAllUsers = async () => {
     const query = `

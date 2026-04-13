@@ -161,7 +161,7 @@ const requireRole = (role) => {
 
 
 // ------------------------------------------------------
-// DASHBOARD (🔥 FIXED)
+// DASHBOARD 
 // ------------------------------------------------------
 const showDashboard = async (req, res) => {
     try {
@@ -172,7 +172,7 @@ const showDashboard = async (req, res) => {
             return res.redirect('/login');
         }
 
-        // ✅ FIX: correct variable
+        //   variable
         const userId = user.user_id || user.id;
 
         console.log("SESSION USER:", user);
