@@ -6,9 +6,6 @@ import {
     getAllUsers 
 } from '../models/users.js';
 
-// ------------------------------------------------------
-// FIXED IMPORT (case-sensitive path)
-// ------------------------------------------------------
 import { 
     getUserVolunteeredProjects 
 } from '../models/projectvolunteers.js';
@@ -164,19 +161,38 @@ const requireRole = (role) => {
 
 
 // ------------------------------------------------------
-// DASHBOARD (Volunteer Feature)
+// DASHBOARD (🔥 FIXED)
 // ------------------------------------------------------
 const showDashboard = async (req, res) => {
-    const user = req.session.user;
+    try {
+        const user = req.session.user;
 
-    const volunteeredProjects = await getUserVolunteeredProjects(user.id);
+        if (!user) {
+            req.flash('error', 'You must be logged in.');
+            return res.redirect('/login');
+        }
 
-    res.render('dashboard', {
-        title: 'Dashboard',
-        name: user.name,
-        email: user.email,
-        volunteeredProjects
-    });
+        // ✅ FIX: correct variable
+        const userId = user.user_id || user.id;
+
+        console.log("SESSION USER:", user);
+        console.log("USING USER ID:", userId);
+
+        const volunteeredProjects = await getUserVolunteeredProjects(userId);
+
+        res.render('dashboard', {
+            title: 'Dashboard',
+            name: user.name,
+            email: user.email,
+            volunteeredProjects,
+            user   // keeps admin features working
+        });
+
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        req.flash('error', 'Error loading dashboard.');
+        res.redirect('/login');
+    }
 };
 
 
