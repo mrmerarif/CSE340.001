@@ -8,7 +8,10 @@ import {
 
 import { getCategoriesByProjectId } from "../models/categories.js";
 import { getAllOrganizations } from "../models/organizations.js";
-import { getVolunteerStatus } from "../models/projectvolunteers.js";
+
+// FIXED: Correct filename with capital V
+import { getVolunteerStatus } from "../models/projectVolunteers.js";
+
 import { body, validationResult } from "express-validator";
 
 
