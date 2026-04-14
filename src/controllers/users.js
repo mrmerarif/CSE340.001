@@ -6,9 +6,10 @@ import {
     getAllUsers 
 } from '../models/users.js';
 
+// FIXED: Correct filename with capital V
 import { 
     getUserVolunteeredProjects 
-} from '../models/projectvolunteers.js';
+} from '../models/projectVolunteers.js';
 
 
 // ------------------------------------------------------
@@ -172,7 +173,6 @@ const showDashboard = async (req, res) => {
             return res.redirect('/login');
         }
 
-        //   variable
         const userId = user.user_id || user.id;
 
         console.log("SESSION USER:", user);
@@ -185,7 +185,7 @@ const showDashboard = async (req, res) => {
             name: user.name,
             email: user.email,
             volunteeredProjects,
-            user   // keeps admin features working
+            user
         });
 
     } catch (error) {
