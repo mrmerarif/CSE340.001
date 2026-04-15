@@ -7,7 +7,6 @@ import {
 } from "../models/projectVolunteers.js";
 
 
-
 // ------------------------------------------------------------
 // Add logged-in user as volunteer for a project
 // ------------------------------------------------------------
@@ -41,7 +40,7 @@ export const volunteerForProject = async (req, res) => {
 export const unvolunteerFromProject = async (req, res) => {
   const projectId = req.params.id;
 
-  // FIX: support both id formats
+  // support both id formats
   const userId = req.session.user?.user_id || req.session.user?.id;
 
   if (!userId) {
@@ -59,13 +58,4 @@ export const unvolunteerFromProject = async (req, res) => {
     req.flash("error", "Could not remove volunteer status.");
     res.redirect(`/project/${projectId}`);
   }
-};
-
-
-// ------------------------------------------------------------
-// Helper: Check volunteer status for project details page
-// ------------------------------------------------------------
-export const getVolunteerStatus = async (projectId, userId) => {
-  if (!userId) return false;
-  return await isUserVolunteering(projectId, userId);
 };
