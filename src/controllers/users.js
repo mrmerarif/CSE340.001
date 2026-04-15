@@ -6,7 +6,7 @@ import {
     getAllUsers 
 } from '../models/users.js';
 
-// FIXED: Correct filename with capital V
+//  Correct filename
 import { 
     getUserVolunteeredProjects 
 } from '../models/projectVolunteers.js';

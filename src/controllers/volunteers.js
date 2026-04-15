@@ -1,8 +1,11 @@
 import {
   addVolunteer,
   removeVolunteer,
-  isUserVolunteering
-} from "../models/projectvolunteers.js";
+  isUserVolunteering,
+  getUserVolunteeredProjects,
+  getVolunteerStatus
+} from "../models/projectVolunteers.js";
+
 
 
 // ------------------------------------------------------------
